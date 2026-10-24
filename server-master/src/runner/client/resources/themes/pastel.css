@@ -1,0 +1,160 @@
+@import "../base.css";
+
+/* Global variables */
+
+:root {
+
+	--color-background: #ddecf5;
+	--panel-background: #eeeeeedd;
+	--panel-contrast: #cccccc;
+
+	--color-dark: #000000;
+	--color-copy: #555555;
+	--color-light: #ffffff;
+
+	--color-gray-dark: #444444;
+	--color-gray: #666666;
+	--color-gray-medium: #888888;
+	--color-gray-light: #aaaaaa;
+
+	--color-primary-dark: #13415c;
+	--color-primary: #457493;
+	--color-primary-medium: #77aac9;
+	--color-primary-light: #9dc4de;
+
+	--color-secondary-dark: #9c8559;
+	--color-secondary: #c5b47a;
+	--color-secondary-medium: #e5d59e;
+	--color-secondary-light: #f3f3c6;
+
+	--color-danger-dark: #7b1e2b;
+	--color-danger: #c83446;
+	--color-danger-medium: #ed6780;
+	--color-danger-light: #ee92a4;
+
+	--color-success-dark: #4f7348;
+	--color-success: #82ad77;
+	--color-success-medium: #a3ce94;
+	--color-success-light: #c0dcaf;
+}
+
+/* Background */
+
+.theme-background {
+	background-image: url(/resources/themes/pastel-mm-bg.jpg);
+}
+
+/*
+ * Pastel dark
+ * Switched by <html data-menu-theme="dark">. UI surfaces use a deep blue-grey palette, while
+ * the renderer repaints actual tile, territory, and background colors for dark mode.
+ */
+
+&[data-menu-theme="dark"] .theme-background {
+	filter: brightness(0.38) saturate(0.8);
+}
+
+&[data-menu-theme="dark"] {
+	--color-background: #15232d;
+	--panel-background: rgba(27, 41, 52, 0.94);
+	--panel-contrast: #2b414e;
+
+	--color-dark: #e6f0f5;
+	--color-copy: #d2dfe6;
+
+	--color-gray-dark: #d8e3e9;
+	--color-gray: #b0c0c9;
+	--color-gray-medium: #8b9da7;
+	--color-gray-light: #617783;
+
+	--color-primary-dark: #193547;
+	--color-primary: #315d76;
+	--color-primary-medium: #507d97;
+	--color-primary-light: #7a9fb4;
+
+	--color-secondary-dark: #443a25;
+	--color-secondary: #78653b;
+	--color-secondary-medium: #ad9259;
+	--color-secondary-light: #d0b982;
+
+	--color-danger-dark: #4b2029;
+	--color-danger: #813545;
+	--color-danger-medium: #a84e61;
+	--color-danger-light: #d27d8c;
+
+	--color-success-dark: #29452d;
+	--color-success: #466d4b;
+	--color-success-medium: #709176;
+	--color-success-light: #9cb89f;
+
+	--menu-pane: #17232d;
+	--menu-pane-shade: rgba(0, 0, 0, 0.35);
+	--menu-outline: #050d13;
+	--menu-bezel-light: var(--color-primary-medium);
+	--menu-bezel: #36607c;
+	--menu-bezel-dark: #0a1d2b;
+	--menu-frame-shadow: rgba(0, 0, 0, 0.45);
+
+	--menu-field: #0d171f;
+	--menu-field-shade: rgba(0, 0, 0, 0.45);
+	--menu-field-ring: #2f5470;
+	--menu-field-ring-focus: var(--color-primary-light);
+	--menu-field-ring-error: var(--color-danger-medium);
+	--menu-ink: #e6f1f8;
+	--menu-hint: #8fb4cd;
+	--menu-placeholder: #5d7587;
+
+	--menu-play: var(--color-primary);
+	--menu-play-hover: #5584a4;
+	--menu-play-hi: var(--color-primary-medium);
+	--menu-play-lo: #0f3248;
+	--menu-play-outline: #050d13;
+	--menu-play-text: var(--color-light);
+
+	--menu-sp: #5a4d30;
+	--menu-sp-hover: #6a5a38;
+	--menu-sp-hi: #8a7747;
+	--menu-sp-lo: #3f3520;
+	--menu-sp-outline: #1d170b;
+	--menu-sp-text: var(--color-secondary-light);
+
+	--menu-dis: #3a4650;
+	--menu-dis-hi: #4c5a65;
+	--menu-dis-lo: #2a343c;
+	--menu-dis-outline: #11181d;
+	--menu-dis-text: #7d8c97;
+
+	--menu-err-bg: #3a1620;
+	--menu-err-text: #ffc2cf;
+	--menu-err-edge: var(--color-danger);
+
+	--menu-toggle-bg: #17232d;
+	--menu-toggle-hi: #35566e;
+	--menu-toggle-lo: #0d171f;
+	--menu-toggle-outline: #050d13;
+	--menu-toggle-icon: var(--color-secondary-medium);
+}
+
+&[data-menu-theme="dark"] .content-field {
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] .settings-tab-container {
+	color: var(--color-copy);
+	background-color: var(--panel-contrast);
+}
+
+&[data-menu-theme="dark"] h2,
+&[data-menu-theme="dark"] .modal-header {
+	color: var(--color-primary-light);
+}
+
+&[data-menu-theme="dark"] input.form-control {
+	background-color: #21323e;
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] input.form-control::placeholder {
+	color: #92a9b7;
+	opacity: 1;
+}

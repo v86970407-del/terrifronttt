@@ -1,0 +1,80 @@
+<ignore>
+	<link rel="stylesheet" type="text/css" href="../../../../resources/themes/pastel.css">
+</ignore>
+
+<div class="theme-background"></div>
+
+<div id="MainMenuContainer" class="layout-window home-menu-layout background-vignette background-blur">
+	<img id="homeScreenLogo" class="theme-logo home-menu-logo" src="/New-logo.png" alt="TerriFront logo">
+
+	<button id="btnThemeToggle" class="home-menu-theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
+		<span class="home-menu-theme-icon" aria-hidden="true"></span>
+	</button>
+	<button id="btnOpenSettings" class="home-menu-settings-button" type="button" aria-label="Open settings" title="Settings">
+		<span class="home-menu-settings-icon" aria-hidden="true"></span>
+	</button>
+	<button class="home-menu-flag-button" id="btnShowFlags" type="button" aria-label="Choose country flag" title="Choose country flag">
+		<img id="countryFlagButtonPreview" alt="" hidden>
+		<span>FLAGS</span>
+	</button>
+
+	<div class="home-menu-center">
+		<div id="homeMenuMainView" class="home-menu-view">
+			<div class="home-menu-frame">
+				<h1 class="home-menu-title">Choose Your Name</h1>
+				<div class="panel w-100 home-menu-panel">
+					<div class="panel-body">
+						<div class="grid grid-1col home-menu-options">
+							<div class="home-menu-name-row">
+								<input class="form-control text-lg home-menu-name" id="playerNameInput" aria-label="Player name" placeholder="Player Name" value="UnknownPlayer">
+							</div>
+							<span class="home-menu-hint">3-32 characters</span>
+
+							<button class="btn btn-primary btn-block home-menu-play" id="btnStartMultiplayer">Play!</button>
+							<button class="btn btn-block home-menu-singleplayer" id="btnStartSingleplayer">Singleplayer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="form-label form-label-danger home-menu-error" style="display: none;" id="playerNameInputValidation"></span>
+			<button id="btnShowThemes" class="home-menu-themes-button" type="button">THEMES</button>
+		</div>
+
+		<div id="homeMenuThemeView" class="home-menu-view home-menu-theme-view" hidden>
+			<div class="home-menu-frame">
+				<h1 class="home-menu-title">Choose a Theme</h1>
+				<div class="panel w-100 home-menu-panel">
+					<div class="panel-body">
+						<div class="home-menu-theme-carousel">
+							<button id="btnPreviousTheme" class="home-menu-theme-arrow" type="button" aria-label="Previous theme">&lt;</button>
+							<button id="btnSelectTheme" class="home-menu-theme-card" type="button" aria-pressed="false">
+								<span id="themePreviewImage" class="home-menu-theme-preview-image" role="img"></span>
+								<span id="themePreviewName" class="home-menu-theme-name"></span>
+								<span id="themePreviewSelected" class="home-menu-theme-selected" hidden>Selected</span>
+							</button>
+							<button id="btnNextTheme" class="home-menu-theme-arrow" type="button" aria-label="Next theme">&gt;</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button id="btnBackFromThemes" class="home-menu-back-button" type="button">Go Back</button>
+		</div>
+
+		<div id="homeMenuFlagView" class="home-menu-view home-menu-flag-view" hidden>
+			<div class="home-menu-frame">
+				<h1 class="home-menu-title">Choose a Flag</h1>
+				<div class="panel w-100 home-menu-panel">
+					<div class="panel-body">
+						<div id="homeMenuFlagCatalog" class="home-menu-flag-catalog" aria-label="Country flags"></div>
+						<a class="home-menu-country-credit" href="https://r74n.com/pixelflags/" target="_blank" rel="noopener noreferrer">Flags by PixelFlags</a>
+					</div>
+				</div>
+			</div>
+			<button id="btnBackFromFlags" class="home-menu-back-button" type="button">Go Back</button>
+		</div>
+	</div>
+
+	<div class="home-menu-footer">
+		<a href="https://discord.gg/Zv8p8tXaDA" target="_blank" title="Join us on Discord" class="icon-fixed icon-discord"></a>
+	</div>
+</div>

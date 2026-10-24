@@ -1,0 +1,16 @@
+**/node_modules/
+**/build/
+**/out/
+
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db
+
+Thumbs.db
+.DS_Store

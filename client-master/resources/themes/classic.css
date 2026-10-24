@@ -1,0 +1,89 @@
+@import "../base.css";
+
+:root {
+	--color-background: #0a0a4a;
+	--panel-background: #d0c9bfed;
+	--panel-contrast: #aaa196;
+
+	--color-dark: #11131c;
+	--color-copy: #252733;
+	--color-light: #f0ede7;
+
+	--color-gray-dark: #3d3b39;
+	--color-gray: #68645f;
+	--color-gray-medium: #8e8880;
+	--color-gray-light: #b3aca2;
+
+	--color-primary-dark: #090938;
+	--color-primary: #17175b;
+	--color-primary-medium: #36366f;
+	--color-primary-light: #77778f;
+
+	--color-secondary-dark: #575046;
+	--color-secondary: #82796d;
+	--color-secondary-medium: #a69d91;
+	--color-secondary-light: #c8c0b5;
+
+	--color-danger-dark: #641d2b;
+	--color-danger: #a93549;
+	--color-danger-medium: #c95668;
+	--color-danger-light: #e28b94;
+
+	--color-success-dark: #31523e;
+	--color-success: #4f785b;
+	--color-success-medium: #78a080;
+	--color-success-light: #a6c2a6;
+}
+
+.theme-background {
+	background-image: url("resources/themes/background-classic.png");
+}
+
+&[data-menu-theme="dark"] {
+	--color-background: #08082d;
+	--panel-background: rgba(26, 27, 48, 0.96);
+	--panel-contrast: #30314c;
+
+	--color-dark: #e6e3dc;
+	--color-copy: #d3d0c9;
+	--color-light: #f0ede7;
+
+	--color-gray-dark: #d3d0c9;
+	--color-gray: #b4b0a8;
+	--color-gray-medium: #918c84;
+	--color-gray-light: #67636a;
+
+	--color-primary-dark: #090938;
+	--color-primary: #17175b;
+	--color-primary-medium: #36366f;
+	--color-primary-light: #77778f;
+
+	--color-secondary-dark: #403a34;
+	--color-secondary: #696158;
+	--color-secondary-medium: #92887b;
+	--color-secondary-light: #b5ab9e;
+}
+
+&[data-menu-theme="dark"] .content-field {
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] .settings-tab-container {
+	color: var(--color-copy);
+	background-color: var(--panel-contrast);
+}
+
+&[data-menu-theme="dark"] h2,
+&[data-menu-theme="dark"] .modal-header {
+	color: var(--color-primary-light);
+}
+
+&[data-menu-theme="dark"] input.form-control {
+	background-color: #20213b;
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] input.form-control::placeholder {
+	color: #aaa7b2;
+	opacity: 1;
+}

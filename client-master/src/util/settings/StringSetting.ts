@@ -20,7 +20,7 @@ export class StringSetting extends Setting<string> {
 		return new StringSetting(defaultValue, category, version)
 			.mutate(value => value.trim().toLowerCase())
 			.mutate(value => !isUrl(value) && isUrl(`https://${value}`) ? `https://${value}` : value)
-			.addRule("Invalid address", value => isUrl(value));
+			.addRule("Invalid address", value => value === "" || isUrl(value));
 	}
 
 	/**

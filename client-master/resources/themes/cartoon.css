@@ -1,0 +1,261 @@
+@import "../base.css";
+
+/*
+ * Cartoon theme
+ * Look: bright toy-box colours with deep grape-ink outlines. The menus use the shared base.css layout
+ * (like the other themes, only colours change); the in-game HUD gets the chunky cartoon treatment.
+ *
+ * Build notes (see scripts/WebpackUIModuleLoader.js): this file is wrapped in ".theme-cartoon { ... }", so
+ *  - nested selectors never start with an element name (use "& h2"),
+ *  - keyframes are renamed by the build, so reference them with animation-name (not the animation shorthand),
+ *  - no braces inside data URIs, and no ":root[...]" selectors (use &[data-menu-theme="dark"]).
+ */
+
+/* ===== Tokens ===== */
+
+:root {
+	--toon-ink: #241b4b;
+	--toon-rim: #ffffff;
+	--toon-row: #ffffff;
+	--toon-row-alt: #fff0c2;
+	--toon-display: 'Vanchrome', 'Overpass', Impact, sans-serif;
+	--toon-body: 'Overpass', 'Trebuchet MS', Arial, sans-serif;
+	--toon-grape: #8a5cf5;
+	--toon-grape-hi: #b794ff;
+	--toon-grape-lo: #5a32c7;
+	--toon-stroke: -2px -2px 0 var(--toon-ink), 2px -2px 0 var(--toon-ink), -2px 2px 0 var(--toon-ink), 2px 2px 0 var(--toon-ink), 0 -2px 0 var(--toon-ink), 0 2px 0 var(--toon-ink), -2px 0 0 var(--toon-ink), 2px 0 0 var(--toon-ink), 0 4px 0 var(--toon-ink);
+
+	--color-background: #5ec8f5;
+	--panel-background: #fff6dc;
+	--panel-contrast: #d8d0f0;
+
+	--color-dark: #241b4b;
+	--color-copy: #3a2f6b;
+	--color-light: #ffffff;
+
+	--color-gray-dark: #3a3360;
+	--color-gray: #5d5683;
+	--color-gray-medium: #8a84ad;
+	--color-gray-light: #bdb8d6;
+
+	--color-primary-dark: #1b4fb8;
+	--color-primary: #2f86f6;
+	--color-primary-medium: #5aa6ff;
+	--color-primary-light: #a9d1ff;
+
+	--color-secondary-dark: #b8730a;
+	--color-secondary: #ffb81f;
+	--color-secondary-medium: #ffd45a;
+	--color-secondary-light: #fff0b0;
+
+	--color-danger-dark: #a31d33;
+	--color-danger: #ff4a5e;
+	--color-danger-medium: #ff7585;
+	--color-danger-light: #ffb0ba;
+
+	--color-success-dark: #2f7d22;
+	--color-success: #4fc23a;
+	--color-success-medium: #7fdc62;
+	--color-success-light: #bdf0a8;
+
+	--menu-pane: #fff6dc;
+	--menu-pane-shade: rgba(36, 27, 75, 0.1);
+	--menu-outline: #241b4b;
+	--menu-bezel-light: #6cb4ff;
+	--menu-bezel: #2f86f6;
+	--menu-bezel-dark: #1b4fb8;
+	--menu-frame-shadow: rgba(36, 27, 75, 0.35);
+
+	--menu-field: #ffffff;
+	--menu-field-shade: rgba(36, 27, 75, 0.12);
+	--menu-field-ring: #241b4b;
+	--menu-field-ring-focus: #2f86f6;
+	--menu-field-ring-error: #ff4a5e;
+	--menu-ink: #241b4b;
+	--menu-hint: #5a4fa0;
+	--menu-placeholder: #a59fc6;
+
+	--menu-play: #2f86f6;
+	--menu-play-hover: #4b9bff;
+	--menu-play-hi: #8cc4ff;
+	--menu-play-lo: #1b4fb8;
+	--menu-play-outline: #241b4b;
+	--menu-play-text: #ffffff;
+
+	--menu-sp: #ffc83d;
+	--menu-sp-hover: #ffd75e;
+	--menu-sp-hi: #ffe99a;
+	--menu-sp-lo: #e59a0a;
+	--menu-sp-outline: #241b4b;
+	--menu-sp-text: #3b2600;
+
+	--menu-dis: #cfcade;
+	--menu-dis-hi: #e6e3f0;
+	--menu-dis-lo: #a9a3c4;
+	--menu-dis-outline: #8a84ad;
+	--menu-dis-text: #8a84ad;
+
+	--menu-err-bg: #ffd7dc;
+	--menu-err-text: #a31d33;
+	--menu-err-edge: #ff4a5e;
+
+	--menu-toggle-bg: #fff6dc;
+	--menu-toggle-hi: #ffffff;
+	--menu-toggle-lo: #ffd982;
+	--menu-toggle-outline: #241b4b;
+	--menu-toggle-icon: #241b4b;
+}
+
+/* Night: the same cartoon after dark. Outlines stay near-black, fills turn deep purple, brights stay bright */
+
+&[data-menu-theme="dark"] {
+	--toon-ink: #0d0926;
+	--toon-rim: #4b3fa8;
+	--toon-row: #342a80;
+	--toon-row-alt: #3d3290;
+
+	--color-background: #1a1442;
+	--panel-background: rgba(38, 30, 86, 0.97);
+	--panel-contrast: #3a2f7d;
+
+	--color-dark: #fdf6ff;
+	--color-copy: #e4dcff;
+
+	--color-gray-dark: #ece6ff;
+	--color-gray: #c3b9ee;
+	--color-gray-medium: #968bd0;
+	--color-gray-light: #6c619f;
+
+	--color-primary-dark: #1d2a7a;
+	--color-primary: #4c6bff;
+	--color-primary-medium: #7a93ff;
+	--color-primary-light: #aab9ff;
+
+	--color-secondary-dark: #8a5a00;
+	--color-secondary: #ffc23d;
+	--color-secondary-medium: #ffd56b;
+	--color-secondary-light: #ffe9a8;
+
+	--color-danger-dark: #7a1530;
+	--color-danger: #ff4a6e;
+	--color-danger-medium: #ff7a92;
+	--color-danger-light: #ffb3c1;
+
+	--color-success-dark: #1f5a2c;
+	--color-success: #3fcf67;
+	--color-success-medium: #6fe28c;
+	--color-success-light: #aef2c0;
+
+	--menu-pane: #2a2166;
+	--menu-pane-shade: rgba(0, 0, 0, 0.28);
+	--menu-outline: #0d0926;
+	--menu-bezel-light: #8a7bff;
+	--menu-bezel: #5a4cd6;
+	--menu-bezel-dark: #2a1f8a;
+	--menu-frame-shadow: rgba(0, 0, 0, 0.5);
+
+	--menu-field: #170f45;
+	--menu-field-shade: rgba(0, 0, 0, 0.4);
+	--menu-field-ring: #6a5de0;
+	--menu-field-ring-focus: #ffc23d;
+	--menu-ink: #f5efff;
+	--menu-hint: #b3a8f0;
+	--menu-placeholder: #7a6fc0;
+
+	--menu-play: #4c6bff;
+	--menu-play-hover: #6a85ff;
+	--menu-play-hi: #9fb2ff;
+	--menu-play-lo: #2a3dbf;
+	--menu-play-outline: #0d0926;
+
+	--menu-sp: #ffc23d;
+	--menu-sp-hover: #ffd56b;
+	--menu-sp-hi: #ffe9a8;
+	--menu-sp-lo: #e0950a;
+	--menu-sp-outline: #0d0926;
+
+	--menu-dis: #3a3270;
+	--menu-dis-hi: #4a4088;
+	--menu-dis-lo: #2a2354;
+	--menu-dis-outline: #170f45;
+	--menu-dis-text: #8479c0;
+
+	--menu-err-bg: #4a1530;
+	--menu-err-text: #ffc2cf;
+
+	--menu-toggle-bg: #2a2166;
+	--menu-toggle-hi: #5a4cd6;
+	--menu-toggle-lo: #170f45;
+	--menu-toggle-outline: #0d0926;
+	--menu-toggle-icon: #ffd56b;
+}
+
+/* ===== Background ===== */
+
+.theme-background {
+	background-image: url("resources/themes/background-cartoon.png");
+}
+
+&[data-menu-theme="dark"] .theme-background {
+	filter: brightness(0.46) saturate(1.1) hue-rotate(22deg);
+}
+
+/* ===== In-game HUD ===== */
+
+.hud-clock {
+	border: 3px solid var(--toon-ink);
+	background-color: var(--color-secondary);
+	color: #3b2600;
+	box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.5), 0 4px 0 var(--toon-ink);
+}
+
+.spawn-timer {
+	--spawn-stair: inset(0 round calc(var(--spawn-u) * 3));
+	--spawn-frame-hi: #ffd45a;
+	--spawn-frame-lo: #f0a010;
+	--spawn-line: #140d33;
+	--spawn-track-edge-hi: #4a3da0;
+	--spawn-track-edge-lo: #2a2070;
+	--spawn-track-hi: #3a2f85;
+	--spawn-track-lo: #241b5e;
+	--spawn-fill-edge-hi: #a6f27c;
+	--spawn-fill-edge-lo: #5fd445;
+	--spawn-fill-hi: #c8ff9e;
+	--spawn-fill-lo: #66d94a;
+	--spawn-text-shadow: #140d33;
+	--spawn-plate: transparent;
+	font-family: var(--toon-display);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.spawn-timer-time,
+.spawn-timer-label {
+	text-shadow: var(--toon-stroke);
+}
+
+/* ===== Night extras (same rules as the other themes, for the elements that read light colours) ===== */
+
+&[data-menu-theme="dark"] .content-field {
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] .settings-tab-container {
+	color: var(--color-copy);
+	background-color: var(--color-primary);
+}
+
+&[data-menu-theme="dark"] h2,
+&[data-menu-theme="dark"] .modal-header {
+	color: var(--color-primary-light);
+}
+
+&[data-menu-theme="dark"] input.form-control {
+	background-color: #170f45;
+	color: var(--color-dark);
+}
+
+&[data-menu-theme="dark"] input.form-control::placeholder {
+	color: #8479c0;
+	opacity: 1;
+}

@@ -134,3 +134,11 @@ You can also define the following properties in the JSON file:
   "font": "Arial"
 }
 ```
+
+## Adding a theme to the in-game theme picker
+
+The `.json` and `.css` files are picked up automatically (the theme also appears in the Settings dropdown). The main-menu picker carousel is a hard-coded list, so also:
+1. add an entry to `themeChoices` in `src/ui/element/MainMenu.ts`,
+2. add a `.home-menu-theme-preview-<name>` rule with a preview image to `resources/base.css`.
+
+The `cartoon` theme is an example: bright toy-box palette and background in `cartoon.css` (menus keep the shared layout, only colours change), with a chunkier look for the in-game HUD. Note: the map JSON key is `tileColors` (with `i` = tile variant, integer maths only), as used by `pastel.json`/`classic.json`.

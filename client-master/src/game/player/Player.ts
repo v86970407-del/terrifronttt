@@ -1,6 +1,11 @@
 import type {HSLColor} from "../../util/HSLColor";
 import {gameMode} from "../GameData";
 
+/**
+ * Income is paid out once every this many game ticks.
+ */
+export const INCOME_INTERVAL_TICKS = 10;
+
 export class Player {
 	readonly id: number;
 	readonly name: string;
@@ -45,7 +50,21 @@ export class Player {
 	 * Process one tick worth of income.
 	 */
 	income() {
-		this.addTroops(Math.max(1, Math.floor(this.territorySize / 10) + Math.floor(Math.pow(3 / 5, 1 - Math.log(this.troops + 1) / Math.LN2))));
+		this.addTroops(this.incomeAmount());
+	}
+
+	/**
+	 * @returns The raw amount of troops one income payout would add (before the troop cap).
+	 */
+	private incomeAmount(): number {
+		return Math.max(1, Math.floor(this.territorySize / 10) + Math.floor(Math.pow(3 / 5, 1 - Math.log(this.troops + 1) / Math.LN2)));
+	}
+
+	/**
+	 * @returns The amount of troops the next income payout will actually add (0 when the troop cap is reached).
+	 */
+	getIncome(): number {
+		return Math.max(0, Math.min(this.incomeAmount(), this.territorySize * 100 - this.troops));
 	}
 
 	/**

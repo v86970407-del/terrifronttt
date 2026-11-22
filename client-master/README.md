@@ -1,17 +1,13 @@
 <p align="center">
-    <a href="http://warfront.io"><img src="https://raw.githubusercontent.com/WarFrontIO/client/master/resources/themes/wf-logo-pastel.png" alt="WarFront.io Logo" width="150"></a>
-</p>
-
-<p align="center">
-<a href="https://discord.gg/tvgfpeCGaD"><img src="https://img.shields.io/discord/1085091019265159198?logo=discord&label=discord&color=%235865F2&labelColor=%232B3137" alt="Discord"></a>
-<a href="https://github.com/WarFrontIO/client/actions/workflows/ci.yml"><img src="https://github.com/WarFrontIO/client/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://discord.gg/upAywr74ff"><img src="https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white&labelColor=2B3137" alt="Discord"></a>
 </p>
 
 ## About
 
-WarFront.io is a real-time strategy game that is played in the browser. Still early in development.
+TerriFront is a real-time strategy game that is played in the browser. Still early in development (closed beta).
 
-You can find the game at [warfront.io](https://warfront.io). Development builds can be found at [dev.warfront.io](https://dev.warfront.io).
+Multiplayer is not finished yet and is hidden from the main menu. Singleplayer is playable, and the Servers tab can
+connect to a TerriFront-compatible server by address.
 
 ## Contributing
 
@@ -23,18 +19,16 @@ Exact details on how to contribute can be found in the [CONTRIBUTING.md](CONTRIB
 To build the project, you will need to have Node.js (>= 20) and npm installed. You can download them
 from [here](https://nodejs.org/).
 
-First, clone the repository:
+See the repository root README for the full layout and Railway deployment. In short:
 
 ```bash
-git clone https://github.com/WarFrontIO/client.git warfront-client
-cd warfront-client
+cd client-master
 ```
 
 Before building the project, you will need to install the dependencies. You can do this by running the following command
 in the project directory:
 
 ```bash
-git submodule update --init --recursive
 npm ci
 ```
 
@@ -49,10 +43,11 @@ npm run dev
 This will start a development server on `http://localhost:8080/` that will automatically reload when you make changes to
 the code. Note that internal servers of IDEs like WebStorm do not work correctly with this project.
 
-For a production build, you can run the following command:
+For a production build and to serve it locally (this is what Railway runs):
 
 ```bash
 npm run build-prod
+npm start        # http://localhost:8080
 ```
 
 ## Converting an image into a map

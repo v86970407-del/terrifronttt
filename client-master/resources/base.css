@@ -51,6 +51,13 @@ h6 {
 /* Fonts */
 
 @font-face {
+	font-family: 'Minecraftia 2.0';
+	src: url(/resources/fonts/Minecraftia-Regular.ttf) format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
 	font-family: 'Vanchrome';
 	src: url(/resources/fonts/vanchrome.woff) format("woff");
 	font-weight: normal;
@@ -254,6 +261,7 @@ html[data-disable-custom-cursor="true"] * {
 }
 
 #MainMenuContainer .home-menu-themes-button,
+#MainMenuContainer .home-menu-servers-button,
 #MainMenuContainer .home-menu-back-button {
 	padding: 14px 16px 4px;
 	border: none;
@@ -290,6 +298,7 @@ html[data-disable-custom-cursor="true"] * {
 	background: #ffdc70;
 }
 
+#MainMenuContainer .home-menu-servers-button:hover,
 #MainMenuContainer .home-menu-back-button:hover {
 	background: var(--menu-play-hover);
 }
@@ -305,6 +314,7 @@ html[data-disable-custom-cursor="true"] * {
 }
 
 #MainMenuContainer .home-menu-themes-button:focus-visible,
+#MainMenuContainer .home-menu-servers-button:focus-visible,
 #MainMenuContainer .home-menu-back-button:focus-visible,
 #MainMenuContainer .home-menu-theme-arrow:focus-visible,
 #MainMenuContainer .home-menu-theme-card:focus-visible {
@@ -530,6 +540,10 @@ html[data-disable-custom-cursor="true"] * {
 
 #MainMenuContainer .home-menu-theme-preview-classic {
 	background-image: url("resources/assets/classic-theme-display.png");
+}
+
+#MainMenuContainer .home-menu-theme-preview-cartoon {
+	background-image: url("resources/assets/cartoon-theme-display.png");
 }
 
 #MainMenuContainer .home-menu-theme-name {
@@ -1451,104 +1465,95 @@ input:checked + .slider {
 
 /* Ingame HUD */
 
+/*
+ * Leaderboard: a quiet dark-glass list. Each row carries a faint bar showing its land relative to the leader,
+ * the top three get podium colours and the player's own row has an accent edge.
+ * Colours come from the theme's menu palette (local variables, so a theme can override them).
+ */
+
 .leaderboard {
+	--lb-bg: color-mix(in srgb, var(--menu-bezel-dark) 30%, #070a12);
+	--lb-edge: color-mix(in srgb, var(--menu-bezel) 55%, #666);
+	--lb-accent: color-mix(in srgb, var(--menu-sp) 85%, #d9d4c8);
+	--lb-text: #ecebe6;
+	--lb-muted: color-mix(in srgb, var(--menu-bezel-light) 35%, #9d9d9d);
+
 	position: absolute;
-	top: 8px;
+	top: 12px;
 	left: 12px;
 	z-index: 2;
-	width: 210px;
-	max-width: calc((100vw - 24px) / 1.15);
-	transform: scale(1.15);
-	transform-origin: top left;
-	border: 1.5px solid #08131f;
-	background: rgba(20, 34, 50, 0.7);
-	color: #d6e0e9;
-	box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+	width: 236px;
+	max-width: calc(100vw - 24px);
+	border: 2px solid var(--lb-edge);
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--lb-bg) 84%, transparent);
+	-webkit-backdrop-filter: blur(4px);
+	backdrop-filter: blur(4px);
+	box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+	color: var(--lb-text);
+	font-family: 'Overpass', Arial, Helvetica, sans-serif;
+	overflow: hidden;
 	pointer-events: auto;
 }
 
 .leaderboard-header {
-	display: grid;
-	grid-template-columns: 17px 1fr 17px;
+	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	width: 100%;
-	height: 25px;
-	padding: 0 6px;
+	height: 30px;
+	padding: 0 12px;
 	border: 0;
-	border-bottom: 1.5px solid #08131f;
-	background: #bd3048;
-	color: #f4e9e8;
-	font-family: 'Vanchrome', sans-serif;
-	font-size: 0.6em;
-	text-align: center;
+	background: none;
+	color: var(--lb-muted);
+	font-family: inherit;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.18em;
 	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
 }
 
 .leaderboard-header:hover,
 .leaderboard-header:focus-visible {
-	background: #ce4058;
+	color: var(--lb-text);
+	outline: none;
 }
 
 .leaderboard-header:focus-visible {
-	outline: 2px solid #f4e9e8;
-	outline-offset: -4px;
-}
-
-.leaderboard-trophy {
-	font-family: 'Overpass', sans-serif;
-	font-size: 0.8em;
-	text-align: left;
+	box-shadow: inset 0 0 0 2px var(--lb-accent);
 }
 
 .leaderboard-chevron {
-	font-family: 'Overpass', sans-serif;
-	font-size: 1.05em;
-	line-height: 1;
+	width: 6px;
+	height: 6px;
+	margin-top: 3px;
+	border: solid currentColor;
+	border-width: 0 2px 2px 0;
+	transform: rotate(-135deg);
 	transition: transform 120ms ease;
 }
 
 .leaderboard-header[aria-expanded="false"] .leaderboard-chevron {
-	transform: rotate(180deg);
+	margin-top: -3px;
+	transform: rotate(45deg);
 }
 
 .leaderboard-content[hidden] {
 	display: none;
 }
 
-.leaderboard-columns,
-.leaderboard-row {
-	display: grid;
-	grid-template-columns: 24px minmax(0, 1fr) 39px;
-	align-items: center;
-	column-gap: 6px;
-}
-
-.leaderboard-columns {
-	height: 19px;
-	padding: 0 7px;
-	background: #203448;
-	color: #bdcbd7;
-	font-size: 0.5em;
-	font-weight: 700;
-	text-transform: uppercase;
-}
-
-.leaderboard-columns span:last-child,
-.leaderboard-land {
-	text-align: right;
-}
-
 .leaderboard-viewport {
-	height: min(203px, calc(100vh - 77px));
+	height: min(240px, calc(100vh - 90px));
 	overflow-x: hidden;
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	scrollbar-color: #647e93 #1b2d3d;
+	scrollbar-color: color-mix(in srgb, var(--lb-muted) 60%, transparent) transparent;
 	scrollbar-width: thin;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .leaderboard-viewport:focus-visible {
-	outline: 2px solid #bdcbd7;
+	outline: 2px solid var(--lb-accent);
 	outline-offset: -2px;
 }
 
@@ -1560,59 +1565,101 @@ input:checked + .slider {
 }
 
 .leaderboard-row {
+	--share: 0;
 	position: absolute;
 	left: 0;
 	right: 0;
-	min-height: 20px;
-	height: 20px;
-	padding: 0 7px;
-	border-bottom: 1px solid #26394a;
-	background: #142232;
-	color: #d6e0e9;
-	font-size: 0.56em;
+	display: grid;
+	grid-template-columns: 22px minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: 8px;
+	height: 24px;
+	padding: 0 12px;
+	color: var(--lb-text);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 24px;
 }
 
-.leaderboard-row:last-child {
-	border-bottom: 0;
+/* land relative to the leader */
+.leaderboard-row::before {
+	content: "";
+	position: absolute;
+	top: 3px;
+	bottom: 3px;
+	left: 0;
+	width: calc(var(--share) * 1%);
+	background: color-mix(in srgb, var(--lb-accent) 14%, transparent);
+	border-radius: 0 3px 3px 0;
+	pointer-events: none;
+}
+
+.leaderboard-row > * {
+	position: relative;
 }
 
 .leaderboard-row-current {
-	background: #294b65;
-	font-weight: 700;
+	background: color-mix(in srgb, var(--lb-accent) 12%, transparent);
+	box-shadow: inset 3px 0 0 var(--lb-accent);
+	color: #fff;
+	font-weight: 800;
+}
+
+.leaderboard-row-current::before {
+	background: color-mix(in srgb, var(--lb-accent) 30%, transparent);
 }
 
 .leaderboard-rank {
-	color: #aebdca;
+	color: var(--lb-muted);
+	font-size: 12px;
 	font-variant-numeric: tabular-nums;
+	text-align: center;
+}
+
+.leaderboard-row[data-podium="1"] .leaderboard-rank {
+	color: #e3b94c;
+}
+
+.leaderboard-row[data-podium="2"] .leaderboard-rank {
+	color: #b9c3cf;
+}
+
+.leaderboard-row[data-podium="3"] .leaderboard-rank {
+	color: #c98b5b;
 }
 
 .leaderboard-player {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: 6px;
+	min-width: 0;
 	overflow: hidden;
 	white-space: nowrap;
 }
 
 .leaderboard-flag {
-	width: 20px;
+	width: 18px;
 	height: 12px;
 	flex: none;
 	object-fit: contain;
 	image-rendering: pixelated;
 }
 
-.country-flag-layer img[hidden] {
-	display: none;
-}
-
 .leaderboard-player-name {
+	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 .leaderboard-land {
+	color: var(--lb-muted);
+	font-size: 12px;
 	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.leaderboard-row-current .leaderboard-land {
+	color: var(--lb-text);
 }
 
 @media screen and (max-width: 480px) {
@@ -1641,26 +1688,31 @@ input:checked + .slider {
 }
 
 /*
- * Troop selector: dark bar with orange arrow buttons (- / +), the troop count in the middle
- * and a percentage marker that follows the slider position.
- * Colours are local variables so a theme can override them.
+ * Attack bar: a flat bar whose filled part shows the selected share of troops, with a tick scale underneath.
+ * The text in the middle is the number of troops that share sends, followed by the share itself.
+ * Colours come from the theme's menu palette and are local variables so a theme can override them.
  */
 
 .selector-container {
-	--selector-accent: #f6a21d;
-	--selector-accent-hi: #ffb94a;
-	--selector-accent-lo: #d98a0f;
-	--selector-bar: #161616;
-	--selector-bar-edge: #2b2b2b;
-	--selector-outline: #0a0a0a;
-	--selector-glyph: #3a2204;
-	--selector-marker: #e8472b;
-	--selector-marker-text: #9c3a0c;
+	--selector-border: var(--menu-outline);
+	--selector-border-in: var(--menu-bezel);
+	--selector-track: color-mix(in srgb, var(--menu-bezel-light) 18%, var(--menu-field));
+	--selector-fill: var(--menu-sp);
+	--selector-fill-edge: var(--menu-sp-lo);
+	--selector-tick: color-mix(in srgb, var(--menu-bezel) 75%, transparent);
+	--selector-ink: var(--menu-ink);
+	--selector-ink-soft: var(--menu-hint);
 
 	display: flex;
 	align-items: center;
-	width: min(520px, 92vw);
+	gap: 6px;
+	width: min(600px, 92vw);
 	margin-bottom: 14px;
+}
+
+&[data-menu-theme="dark"] .selector-container {
+	--selector-fill: color-mix(in srgb, var(--menu-sp) 70%, #0d171f);
+	--selector-fill-edge: var(--menu-sp);
 }
 
 .selector-container.anchor-bottom-center {
@@ -1668,162 +1720,122 @@ input:checked + .slider {
 	transform-origin: bottom center;
 }
 
+/* small square - / + keys next to the bar */
 .selector-step {
 	position: relative;
-	z-index: 2;
 	flex: none;
 	display: grid;
 	place-items: center;
-	width: 46px;
-	height: 60px;
+	width: 44px;
+	height: 52px;
 	padding: 0;
 	border: 0;
-	background: var(--selector-outline);
-	color: var(--selector-glyph);
+	background: var(--selector-track);
+	color: var(--selector-ink);
+	box-shadow:
+		0 0 0 2px var(--selector-border),
+		inset 0 0 0 3px var(--selector-border-in),
+		inset 0 0 0 4px var(--selector-track);
 	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
 	pointer-events: auto;
 	-webkit-tap-highlight-color: transparent;
 }
 
-.selector-step-minus {
-	clip-path: polygon(0 50%, 24px 0, 100% 0, 100% 100%, 24px 100%);
-}
-
-.selector-step-plus {
-	clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%);
-}
-
-/* orange face, inset 3px so the dark outline shows around it */
-.selector-step::before {
-	content: "";
-	position: absolute;
-	inset: 3px;
-	background: linear-gradient(var(--selector-accent-hi), var(--selector-accent) 55%, var(--selector-accent-lo));
-}
-
-.selector-step-minus::before {
-	clip-path: polygon(1px 50%, 22px 0, 100% 0, 100% 100%, 22px 100%);
-}
-
-.selector-step-plus::before {
-	clip-path: polygon(0 0, calc(100% - 22px) 0, calc(100% - 1px) 50%, calc(100% - 22px) 100%, 0 100%);
-}
-
 /* the - and + glyphs are drawn with gradients so they stay crisp at any size */
 .selector-step::after {
 	content: "";
-	position: relative;
-	width: 14px;
-	height: 14px;
-	background: linear-gradient(currentColor, currentColor) center / 100% 4px no-repeat;
+	width: 16px;
+	height: 16px;
+	background: linear-gradient(currentColor, currentColor) center / 100% 3px no-repeat;
 }
 
 .selector-step-plus::after {
 	background:
-		linear-gradient(currentColor, currentColor) center / 100% 4px no-repeat,
-		linear-gradient(currentColor, currentColor) center / 4px 100% no-repeat;
+		linear-gradient(currentColor, currentColor) center / 100% 3px no-repeat,
+		linear-gradient(currentColor, currentColor) center / 3px 100% no-repeat;
 }
 
-.selector-step-minus::after {
-	margin-left: 6px;
-}
-
-.selector-step-plus::after {
-	margin-right: 6px;
-}
-
-.selector-step:hover::before,
-.selector-step:focus-visible::before {
-	filter: brightness(1.12);
-}
-
-.selector-step:active::before {
-	background: var(--selector-accent-lo);
-}
-
+.selector-step:hover,
 .selector-step:focus-visible {
+	background: var(--menu-sp-hover, var(--selector-fill));
 	outline: none;
+}
+
+.selector-step:active {
+	background: var(--selector-fill-edge);
 }
 
 .selector-slider {
 	position: relative;
-	z-index: 1;
 	flex: 1;
 	display: block;
 	min-width: 0;
 	height: 52px;
-	margin: 0 -2px;
-	background: var(--selector-bar);
+	background: var(--selector-track);
 	box-shadow:
-		0 0 0 2px var(--selector-outline),
-		inset 0 2px 0 var(--selector-bar-edge);
+		0 0 0 2px var(--selector-border),
+		inset 0 0 0 1px var(--selector-border-in);
 	--value: 50%;
 	pointer-events: all;
-		cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
+	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
 }
 
-/* vertical line at the current slider position */
-.selector-slider::after {
+/* the filled part up to the selected share */
+.selector-slider::before {
 	content: "";
 	position: absolute;
-	top: -1px;
-	bottom: 0;
-	left: var(--value);
-	width: 2px;
-	margin-left: -1px;
-	background: var(--selector-marker);
-	z-index: 3;
+	top: 1px;
+	bottom: 1px;
+	left: 1px;
+	width: calc(var(--value) - 1px);
+	background: var(--selector-fill);
+	border-right: 2px solid var(--selector-fill-edge);
 	pointer-events: none;
 }
 
-/* troop count, centred on the bar (clicks fall through to the slider) */
-.selector-troops {
+/* tick scale: eight equal sections */
+.selector-slider::after {
+	content: "";
+	position: absolute;
+	left: 1px;
+	right: 1px;
+	bottom: 1px;
+	height: 8px;
+	background: repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), var(--selector-tick) calc(12.5% - 1px), var(--selector-tick) 12.5%);
+	pointer-events: none;
+}
+
+/* troops + share, centred (clicks fall through to the slider) */
+.selector-text {
 	position: absolute;
 	inset: 0;
 	z-index: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--color-light, #fff);
+	gap: 0.35em;
 	font-family: 'Overpass', Arial, Helvetica, sans-serif;
-	font-size: 30px;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	font-variant-numeric: tabular-nums;
-	text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+	font-size: 26px;
 	white-space: nowrap;
 	pointer-events: none;
 }
 
-/* percentage tab sitting on top of the bar, pointing down at the line */
+.selector-troops {
+	color: var(--selector-ink);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+}
+
 .selector-number {
-	position: absolute;
-	left: var(--value);
-	bottom: calc(100% + 1px);
-	z-index: 2;
-	min-width: 46px;
-	padding: 2px 6px 9px;
-	transform: translateX(-50%);
-	border-radius: 4px 4px 0 0;
-	background: var(--selector-accent);
-	color: var(--selector-marker-text);
-	font-family: 'Overpass', Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: 700;
-	line-height: 16px;
-	text-align: center;
-	clip-path: polygon(
-		0 0, 100% 0, 100% calc(100% - 6px),
-		calc(50% + 6px) calc(100% - 6px), 50% 100%, calc(50% - 6px) calc(100% - 6px),
-		0 calc(100% - 6px)
-	);
-	pointer-events: none;
+	color: var(--selector-ink-soft);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
 }
 
 .selector-slider:has(input:focus-visible) {
 	box-shadow:
-		0 0 0 2px var(--selector-accent),
-		inset 0 2px 0 var(--selector-bar-edge);
+		0 0 0 2px var(--selector-border),
+		0 0 0 4px var(--selector-fill-edge);
 }
 
 .selector-slider > input {
@@ -1834,11 +1846,167 @@ input:checked + .slider {
 
 @media screen and (max-width: 480px) {
 	.selector-step {
-		width: 40px;
+		width: 38px;
 	}
 
-	.selector-troops {
-		font-size: 24px;
+	.selector-text {
+		font-size: 20px;
+	}
+}
+
+/* Resource panel (top-right): troops, income per tick and a few empire stats.
+ * Colours come from the active theme's menu palette, softened towards grey so they never turn neon. */
+
+.resource-panel {
+	--resource-outline: color-mix(in srgb, var(--menu-outline) 70%, #000);
+	--resource-edge-hi: color-mix(in srgb, var(--menu-bezel-light) 55%, #9a9a9a);
+	--resource-edge: color-mix(in srgb, var(--menu-bezel) 60%, #666);
+	--resource-edge-lo: color-mix(in srgb, var(--menu-bezel-dark) 70%, #333);
+	--resource-edge-line: color-mix(in srgb, var(--menu-bezel-dark) 45%, #0a0a0f);
+	--resource-body: color-mix(in srgb, var(--menu-bezel-dark) 30%, #0b0e16);
+	--resource-body-deep: color-mix(in srgb, var(--menu-bezel-dark) 20%, #06080e);
+	--resource-gold: color-mix(in srgb, var(--menu-sp) 78%, #d9d4c8);
+	--resource-gold-soft: color-mix(in srgb, var(--menu-sp-hi) 65%, #d9d4c8);
+	--resource-text: #ecebe6;
+	--resource-muted: color-mix(in srgb, var(--menu-bezel-light) 35%, #9d9d9d);
+	--resource-icon: color-mix(in srgb, var(--menu-bezel-light) 50%, #9d9d9d);
+
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 2;
+	width: 276px;
+	transform-origin: top right;
+	pointer-events: auto;
+	font-family: "Minecraftia 2.0", monospace;
+	filter:
+		drop-shadow(2px 0 0 var(--resource-outline))
+		drop-shadow(-2px 0 0 var(--resource-outline))
+		drop-shadow(0 2px 0 var(--resource-outline))
+		drop-shadow(0 -2px 0 var(--resource-outline))
+		drop-shadow(0 6px 0 rgba(0, 0, 0, 0.35));
+}
+
+.resource-frame {
+	padding: 10px;
+	background: var(--resource-edge-line);
+	/* light rim, orange body, darker underside, dark inner line */
+	box-shadow:
+		inset 0 -4px 0 0 var(--resource-edge-lo),
+		inset 0 0 0 3px var(--resource-edge-hi),
+		inset 0 0 0 8px var(--resource-edge),
+		inset 0 0 0 10px var(--resource-edge-line);
+	/* 6px stepped corners */
+	clip-path: polygon(
+		0 6px, 2px 6px, 2px 4px, 4px 4px, 4px 2px, 6px 2px, 6px 0,
+		calc(100% - 6px) 0, calc(100% - 6px) 2px, calc(100% - 4px) 2px, calc(100% - 4px) 4px, calc(100% - 2px) 4px, calc(100% - 2px) 6px, 100% 6px,
+		100% calc(100% - 6px), calc(100% - 2px) calc(100% - 6px), calc(100% - 2px) calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) calc(100% - 2px), calc(100% - 6px) calc(100% - 2px), calc(100% - 6px) 100%,
+		6px 100%, 6px calc(100% - 2px), 4px calc(100% - 2px), 4px calc(100% - 4px), 2px calc(100% - 4px), 2px calc(100% - 6px), 0 calc(100% - 6px)
+	);
+}
+
+.resource-body {
+	padding: 12px 8px 10px;
+	background: linear-gradient(var(--resource-body), var(--resource-body-deep));
+	box-shadow: inset 0 0 0 2px #060b14;
+	text-align: center;
+}
+
+.resource-main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #060b14;
+	box-shadow: 0 2px 0 rgba(255, 255, 255, 0.08);
+}
+
+.resource-troops {
+	color: var(--resource-gold);
+	font-size: 32px;
+	line-height: 40px;
+	font-variant-numeric: tabular-nums;
+	text-shadow: 0 3px 0 rgba(0, 0, 0, 0.55);
+	white-space: nowrap;
+}
+
+.resource-troops-long {
+	font-size: 24px;
+}
+
+.resource-rate {
+	color: var(--resource-gold-soft);
+	font-size: 12px;
+	line-height: 16px;
+	text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+	white-space: nowrap;
+}
+
+.resource-stats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 4px;
+	padding-top: 10px;
+}
+
+.resource-stat {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 0;
+}
+
+.resource-stat-icon {
+	width: 24px;
+	height: 24px;
+	margin-bottom: 4px;
+	background: var(--resource-icon);
+}
+
+.resource-icon-players {
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M3 1h4v4h-4zM1 6h8v5h-8zM8 3h3v3h-3zM10 7h2v4h-2z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M3 1h4v4h-4zM1 6h8v5h-8zM8 3h3v3h-3zM10 7h2v4h-2z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.resource-icon-map {
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M2 1h1v10h-1zM3 1h8v6h-8zM1 11h4v1h-4z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M2 1h1v10h-1zM3 1h8v6h-8zM1 11h4v1h-4z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.resource-icon-interest {
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M5 1h2v1h-2zM4 2h4v1h-4zM3 3h6v1h-6zM2 4h8v1h-8zM5 5h2v6h-2z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath d='M5 1h2v1h-2zM4 2h4v1h-4zM3 3h6v1h-6zM2 4h8v1h-8zM5 5h2v6h-2z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.resource-stat-value {
+	color: var(--resource-text);
+	font-size: 16px;
+	line-height: 20px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.resource-stat-label {
+	color: var(--resource-muted);
+	font-size: 12px;
+	line-height: 16px;
+	white-space: nowrap;
+}
+
+@media screen and (max-width: 1000px) {
+	.resource-panel {
+		transform: scale(0.8);
+	}
+}
+
+@media screen and (max-width: 760px) {
+	.resource-panel {
+		transform: scale(0.72);
+	}
+
+	/* keep the settings / quit buttons clear of the attack bar */
+	.hud-buttons {
+		bottom: 90px;
 	}
 }
 
@@ -2204,6 +2372,337 @@ input:checked + .slider {
 	.settings-category > * {
 		width: 50%;
 	}
+}
+
+/* Settings window: same pixel frame as the main-menu boxes (outline + stepped bezel + title on the top edge) */
+
+#SettingsPanel .panel,
+#defaultPanel .panel:has(.map-select-grid) {
+	position: relative;
+	width: min(100%, 520px);
+	max-width: 520px !important;
+	background: transparent;
+	filter:
+		drop-shadow(2px 0 0 var(--menu-outline))
+		drop-shadow(-2px 0 0 var(--menu-outline))
+		drop-shadow(0 2px 0 var(--menu-outline))
+		drop-shadow(0 -2px 0 var(--menu-outline))
+		drop-shadow(0 6px 0 var(--menu-frame-shadow));
+}
+
+#SettingsPanel .panel-header,
+#defaultPanel .panel:has(.map-select-grid) .panel-header {
+	position: absolute;
+	top: -12px;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	height: auto;
+	margin: 0;
+	padding: 0 !important;
+	border: none;
+	background: transparent;
+	color: var(--color-light);
+	font-family: "Minecraftia 2.0", monospace;
+	font-size: 16px;
+	font-weight: normal;
+	letter-spacing: normal;
+	line-height: 24px;
+	text-align: center;
+	text-shadow: none;
+	text-transform: none;
+	pointer-events: none;
+}
+
+#SettingsPanel .panel > .icon-fixed,
+#defaultPanel .panel:has(.map-select-grid) > .icon-fixed {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	z-index: 2;
+	float: none;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	mask-size: 24px;
+	-webkit-mask-size: 24px;
+	background-color: var(--menu-ink);
+}
+
+#SettingsPanel .panel > .icon-fixed:hover,
+#SettingsPanel .panel > .icon-fixed:focus-visible,
+#defaultPanel .panel:has(.map-select-grid) > .icon-fixed:hover,
+#defaultPanel .panel:has(.map-select-grid) > .icon-fixed:focus-visible {
+	background-color: var(--menu-play-hover);
+	transform: none;
+}
+
+#SettingsPanel .panel-body,
+#defaultPanel .panel:has(.map-select-grid) .panel-body {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-height: none;
+	margin: 0;
+	padding: 8px;
+	border: none;
+	outline: none;
+	overflow: visible;
+	background: linear-gradient(var(--menu-pane), var(--menu-pane)) content-box, var(--menu-bezel-dark) border-box;
+	box-shadow:
+		inset 0 0 0 2px var(--menu-bezel-light),
+		inset 0 0 0 6px var(--menu-bezel),
+		inset 0 0 0 8px var(--menu-bezel-dark);
+	clip-path: polygon(
+		0 4px, 2px 4px, 2px 2px, 4px 2px, 4px 0,
+		calc(100% - 4px) 0, calc(100% - 4px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 4px, 100% 4px,
+		100% calc(100% - 4px), calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) calc(100% - 2px), calc(100% - 4px) calc(100% - 2px), calc(100% - 4px) 100%,
+		4px 100%, 4px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 4px), 0 calc(100% - 4px)
+	);
+	color: var(--menu-ink);
+	font-family: "Minecraftia 2.0", monospace;
+	font-size: 16px;
+	line-height: 24px;
+}
+
+/* Category tabs become a row of pixel keys (same look as the top-right menu buttons), labelled with the category name */
+
+@media screen and (min-width: 768px) {
+	#SettingsPanel .settings-tab-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin: 0;
+		padding: 22px 12px 12px;
+		border: none;
+		border-bottom: 2px solid var(--menu-pane-shade);
+		background: none;
+		color: inherit;
+	}
+
+	#SettingsPanel .settings-tab-container::before,
+	#SettingsPanel .settings-tab-container::after,
+	#SettingsPanel .settings-tab::before,
+	#SettingsPanel .settings-tab::after {
+		display: none;
+	}
+
+	#SettingsPanel .settings-tab,
+	#SettingsPanel .settings-tab:first-child {
+		width: auto;
+		height: 36px;
+		margin: 0;
+		padding: 0;
+		border: none;
+		clip-path: none;
+		background: var(--menu-toggle-bg);
+		cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
+		box-shadow:
+			0 0 0 2px var(--menu-toggle-outline),
+			inset 0 2px 0 0 var(--menu-toggle-hi),
+			inset 0 -4px 0 0 var(--menu-toggle-lo);
+	}
+
+	#SettingsPanel .settings-tab:hover {
+		background: var(--menu-sp-hover);
+	}
+
+	#SettingsPanel .settings-tab.settings-tab-active,
+	#SettingsPanel .settings-tab.settings-tab-active:hover {
+		background: var(--menu-sp);
+		box-shadow:
+			0 0 0 2px var(--menu-sp-outline),
+			inset 0 2px 0 0 var(--menu-sp-hi),
+			inset 0 -4px 0 0 var(--menu-sp-lo);
+	}
+
+	#SettingsPanel .settings-tab > a {
+		display: block !important;
+		width: auto;
+		height: 36px;
+		padding: 6px 14px 0;
+		background: none;
+		color: var(--menu-ink);
+		font-size: 16px;
+		line-height: 24px;
+		white-space: nowrap;
+		-webkit-mask: none;
+		mask: none;
+		transform: none;
+	}
+
+	#SettingsPanel .settings-tab > a::after {
+		content: attr(data-label);
+	}
+
+	#SettingsPanel .settings-tab:hover > a {
+		background: none;
+		transform: none;
+	}
+
+	#SettingsPanel .settings-tab-active > a {
+		color: var(--menu-sp-text);
+	}
+
+	#SettingsPanel .settings-category-container {
+		width: 100%;
+		margin: 0;
+		overflow: visible;
+	}
+
+	#SettingsPanel .settings-category-active {
+		flex-wrap: nowrap;
+		gap: 10px 0;
+		min-height: 0;
+	}
+
+	#SettingsPanel .settings-category > * {
+		width: 100%;
+	}
+}
+
+#SettingsPanel .settings-category-container {
+	flex-grow: 1;
+	padding: 14px 16px 16px;
+}
+
+#SettingsPanel .settings-category {
+	max-height: none !important;
+	border: none;
+}
+
+#SettingsPanel .settings-category > h3 {
+	margin: 0 0 4px;
+	color: var(--menu-ink);
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: normal;
+	line-height: 24px;
+	text-transform: none;
+}
+
+/* Controls use the menu's recessed fields and bezel keys */
+
+#SettingsPanel .single-select,
+#SettingsPanel input.form-control {
+	height: 32px;
+	margin-right: 8px;
+	padding: 8px 8px 0;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	background: var(--menu-field);
+	color: var(--menu-ink);
+	font-family: inherit;
+	font-size: 16px;
+	line-height: 24px;
+	box-shadow:
+		inset 0 0 0 2px var(--menu-field-ring),
+		inset 0 4px 0 2px var(--menu-field-shade);
+}
+
+#SettingsPanel input.form-control:focus,
+#SettingsPanel .single-select:focus-visible {
+	box-shadow:
+		inset 0 0 0 2px var(--menu-field-ring-focus),
+		inset 0 4px 0 2px var(--menu-field-shade);
+}
+
+#SettingsPanel input.form-control.form-control-error {
+	box-shadow:
+		inset 0 0 0 2px var(--menu-field-ring-error),
+		inset 0 4px 0 2px var(--menu-field-shade);
+}
+
+#SettingsPanel input.form-control::placeholder {
+	color: var(--menu-placeholder);
+	opacity: 1;
+}
+
+#SettingsPanel .slider,
+#SettingsPanel .slider:before {
+	border-radius: 0;
+}
+
+#SettingsPanel .slider {
+	background-color: var(--menu-field);
+	box-shadow: 0 0 0 2px var(--menu-field-ring);
+	transition: none;
+}
+
+#SettingsPanel .slider:before {
+	background-color: var(--menu-ink);
+	transition: none;
+}
+
+#SettingsPanel input:checked + .slider {
+	background-color: var(--menu-play);
+}
+
+#SettingsPanel input:checked + .slider:before {
+	background-color: var(--menu-play-text);
+}
+
+#SettingsPanel .btn,
+#defaultPanel .panel:has(.map-select-grid) .btn {
+	height: 36px;
+	padding: 10px 12px 0;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	background: var(--menu-play);
+	color: var(--menu-play-text);
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: normal;
+	line-height: 24px;
+	text-transform: none;
+	text-shadow: none;
+	transform: none;
+	box-shadow:
+		0 0 0 2px var(--menu-play-outline),
+		inset 0 2px 0 0 var(--menu-play-hi),
+		inset 0 -4px 0 0 var(--menu-play-lo);
+}
+
+#SettingsPanel .btn:hover,
+#defaultPanel .panel:has(.map-select-grid) .btn:hover {
+	background: var(--menu-play-hover);
+	transform: none;
+}
+
+#SettingsPanel .btn:active,
+#defaultPanel .panel:has(.map-select-grid) .btn:active {
+	padding-top: 12px;
+	box-shadow:
+		0 0 0 2px var(--menu-play-outline),
+		inset 0 2px 0 0 var(--menu-play-lo),
+		inset 0 -2px 0 0 var(--menu-play-lo);
+}
+
+#SettingsPanel .form-label {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+#defaultPanel .panel:has(.map-select-grid) .map-select-grid {
+	gap: 12px;
+	padding: 48px 12px 16px;
+}
+
+#defaultPanel .panel:has(.map-select-grid) .map-select-grid .btn {
+	width: 100%;
+	height: 44px;
+	margin: 0;
+	padding: 14px 8px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
+}
+
+#defaultPanel .panel:has(.map-select-grid) .map-select-grid .btn:active {
+	padding-top: 16px;
 }
 
 /* Alerts */
@@ -2914,4 +3413,554 @@ html.lobby-active:has(#defaultPanel .lobby-browser) #btnThemeToggle {
 
 html.lobby-active #defaultPanel {
 	visibility: visible;
+}
+
+/* =====================================================================================================================
+ * Server browser (home menu)
+ *
+ * A fourth view of the home menu, next to the main, theme and flag views. Rows follow the lobby list (same tokens,
+ * so every theme and the dark mode work without extra rules), buttons follow the home menu bezel buttons.
+ * Minecraftia sits high in its line box, so text gets the same few pixels of top padding the rest of the menu uses.
+ * ===================================================================================================================== */
+
+/* main view: which server "Play!" uses, and the SERVERS | THEMES row */
+#MainMenuContainer .home-menu-server-current {
+	display: block;
+	margin-top: 18px;
+	overflow: hidden;
+	color: var(--menu-hint);
+	font-size: 12px;
+	line-height: 16px;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-shadow: 1px 1px 0 var(--menu-outline);
+}
+
+#MainMenuContainer .home-menu-extras {
+	display: flex;
+	gap: 8px;
+	margin-top: 6px;
+}
+
+#MainMenuContainer .home-menu-extras .home-menu-themes-button,
+#MainMenuContainer .home-menu-extras .home-menu-servers-button {
+	flex: 1 1 0;
+	min-width: 0;
+	width: auto;
+	margin-top: 0;
+}
+
+/* the server list needs more room than the other views, and the logo would only get in the way */
+#MainMenuContainer .home-menu-center.home-menu-server-picker-active {
+	width: min(600px, calc(100% - 32px));
+}
+
+#MainMenuContainer:has(.home-menu-server-picker-active) .home-menu-logo {
+	display: none;
+}
+
+#MainMenuContainer .home-menu-server-view .home-menu-panel .panel-body {
+	padding: 12px;
+}
+
+/* list */
+#MainMenuContainer .server-list {
+	display: grid;
+	align-content: start;
+	gap: 2px;
+	min-height: 124px;
+	max-height: min(40vh, 296px);
+	overflow-y: auto;
+	padding: 2px;
+	background: var(--lobby-pane);
+	scrollbar-color: var(--menu-bezel) var(--menu-pane);
+	scrollbar-width: thin;
+}
+
+#MainMenuContainer .server-list:focus {
+	outline: none;
+}
+
+#MainMenuContainer .server-list:focus-visible {
+	outline: 2px solid var(--menu-toggle-icon);
+	outline-offset: 2px;
+}
+
+#MainMenuContainer .server-entry {
+	display: grid;
+	grid-template-columns: 48px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	min-height: 60px;
+	padding: 6px 8px 6px 6px;
+	background: var(--lobby-row);
+	color: var(--lobby-ink);
+	font-size: 16px;
+	line-height: 24px;
+	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
+}
+
+#MainMenuContainer .server-entry:hover {
+	background: color-mix(in srgb, var(--menu-bezel-light) 16%, var(--lobby-row));
+}
+
+#MainMenuContainer .server-entry[aria-selected="true"] {
+	background: var(--lobby-row-primary);
+	box-shadow: inset 0 0 0 2px var(--menu-field-ring-focus);
+}
+
+/* icon: the server's logo, or the same little map the lobby list uses */
+#MainMenuContainer .server-icon {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	overflow: hidden;
+	border: 2px solid var(--lobby-pane);
+	image-rendering: pixelated;
+	background-color: var(--lobby-map-sea-deep);
+	background-image:
+		radial-gradient(ellipse at 52% 50%, var(--lobby-map-peak) 0 14%, transparent 15%),
+		radial-gradient(ellipse at 50% 50%, var(--lobby-map-land) 0 34%, transparent 35%),
+		linear-gradient(135deg, var(--lobby-map-sea), var(--lobby-map-sea-deep));
+	background-size: cover;
+	background-position: center;
+}
+
+#MainMenuContainer .server-icon img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	image-rendering: auto;
+}
+
+#MainMenuContainer .server-main {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+/* first line: name, then the badges */
+#MainMenuContainer .server-head {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	min-width: 0;
+	height: 24px;
+	padding-top: 4px;
+}
+
+#MainMenuContainer .server-name {
+	flex: 0 1 auto;
+	min-width: min(96px, 100%);
+	overflow: hidden;
+	font-size: 16px;
+	line-height: 20px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#MainMenuContainer .server-sub {
+	display: block;
+	min-width: 0;
+	padding-top: 3px;
+	overflow: hidden;
+	color: var(--lobby-muted);
+	font-size: 12px;
+	line-height: 16px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#MainMenuContainer .server-sub[data-tone="error"] {
+	color: var(--menu-err-text);
+}
+
+#MainMenuContainer .server-sub[data-tone="warn"] {
+	color: var(--lobby-time-mid);
+}
+
+/* small labels after the name */
+#MainMenuContainer .server-badges {
+	display: flex;
+	flex: 0 1 auto;
+	gap: 4px;
+	min-width: 0;
+	overflow: hidden;
+}
+
+#MainMenuContainer .server-badge {
+	flex: none;
+	height: 20px;
+	padding: 5px 6px 0;
+	background: var(--lobby-badge-bg);
+	color: var(--lobby-badge-ink);
+	font-size: 12px;
+	line-height: 15px;
+	white-space: nowrap;
+}
+
+#MainMenuContainer .server-badge-official {
+	background: var(--menu-play);
+	color: var(--menu-play-text);
+}
+
+#MainMenuContainer .server-badge-warn {
+	color: var(--lobby-time-mid);
+}
+
+/* right side: players and ping */
+#MainMenuContainer .server-side {
+	display: grid;
+	justify-items: end;
+	gap: 4px;
+}
+
+#MainMenuContainer .server-players {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	color: var(--lobby-ink);
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+#MainMenuContainer .server-players[hidden] {
+	display: none;
+}
+
+#MainMenuContainer .server-players-count {
+	position: relative;
+	top: 3px;
+}
+
+#MainMenuContainer .server-ping {
+	--ping: var(--lobby-line);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 16px;
+	color: var(--lobby-muted);
+	font-size: 12px;
+}
+
+#MainMenuContainer .server-ping-ms {
+	position: relative;
+	top: 3px;
+}
+
+#MainMenuContainer .server-bars {
+	display: inline-flex;
+	align-items: flex-end;
+	gap: 1px;
+	width: 15px;
+	height: 14px;
+}
+
+#MainMenuContainer .server-bars i {
+	display: block;
+	width: 3px;
+	background: var(--lobby-line);
+}
+
+#MainMenuContainer .server-bars i:nth-child(1) { height: 4px; }
+#MainMenuContainer .server-bars i:nth-child(2) { height: 7px; }
+#MainMenuContainer .server-bars i:nth-child(3) { height: 10px; }
+#MainMenuContainer .server-bars i:nth-child(4) { height: 14px; }
+
+#MainMenuContainer .server-ping[data-state="level"][data-level="4"] { --ping: var(--lobby-time-soon); }
+#MainMenuContainer .server-ping[data-state="level"][data-level="3"] { --ping: var(--lobby-time-soon); }
+#MainMenuContainer .server-ping[data-state="level"][data-level="2"] { --ping: var(--lobby-time-mid); }
+#MainMenuContainer .server-ping[data-state="level"][data-level="1"] { --ping: var(--menu-err-edge); }
+
+#MainMenuContainer .server-ping[data-level="1"] .server-bars i:nth-child(-n+1),
+#MainMenuContainer .server-ping[data-level="2"] .server-bars i:nth-child(-n+2),
+#MainMenuContainer .server-ping[data-level="3"] .server-bars i:nth-child(-n+3),
+#MainMenuContainer .server-ping[data-level="4"] .server-bars i:nth-child(-n+4) {
+	background: var(--ping);
+}
+
+/* waiting for an answer: bars fill up one by one */
+#MainMenuContainer .server-ping[data-state="pending"] .server-bars i {
+	animation: server-bar-wait 1s steps(1, end) infinite;
+}
+
+#MainMenuContainer .server-ping[data-state="pending"] .server-bars i:nth-child(2) { animation-delay: 0.15s; }
+#MainMenuContainer .server-ping[data-state="pending"] .server-bars i:nth-child(3) { animation-delay: 0.3s; }
+#MainMenuContainer .server-ping[data-state="pending"] .server-bars i:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes server-bar-wait {
+	0%   { background: var(--lobby-muted); }
+	50%  { background: var(--lobby-line); }
+}
+
+/* unreachable: a pixel cross instead of the bars */
+#MainMenuContainer .server-ping[data-state="error"] .server-bars i {
+	display: none;
+}
+
+#MainMenuContainer .server-ping[data-state="error"] .server-bars::before {
+	content: "";
+	width: 14px;
+	height: 14px;
+	background: var(--menu-err-edge);
+	-webkit-mask: var(--server-cross) center / contain no-repeat;
+	mask: var(--server-cross) center / contain no-repeat;
+	image-rendering: pixelated;
+}
+
+:root {
+	--server-cross: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%207%207'%20shape-rendering='crispEdges'%3E%3Cpath%20d='M0%200h1v1H0zM0%201h1v1H0zM0%205h1v1H0zM0%206h1v1H0zM1%200h1v1H1zM1%201h1v1H1zM1%202h1v1H1zM1%204h1v1H1zM1%205h1v1H1zM1%206h1v1H1zM2%201h1v1H2zM2%202h1v1H2zM2%203h1v1H2zM2%204h1v1H2zM2%205h1v1H2zM3%202h1v1H3zM3%203h1v1H3zM3%204h1v1H3zM4%201h1v1H4zM4%202h1v1H4zM4%203h1v1H4zM4%204h1v1H4zM4%205h1v1H4zM5%200h1v1H5zM5%201h1v1H5zM5%202h1v1H5zM5%204h1v1H5zM5%205h1v1H5zM5%206h1v1H5zM6%200h1v1H6zM6%201h1v1H6zM6%205h1v1H6zM6%206h1v1H6z'/%3E%3C/svg%3E");
+}
+
+#MainMenuContainer .server-empty {
+	margin: 0;
+	padding: 12px 8px;
+	color: var(--lobby-muted);
+	font-size: 12px;
+	line-height: 16px;
+	text-align: center;
+}
+
+/* notice under the list: community-server warning, or why joining is not possible */
+#MainMenuContainer .server-notice {
+	min-height: 24px;
+	margin: 8px 0 0;
+	padding-top: 4px;
+	color: var(--menu-hint);
+	font-size: 12px;
+	line-height: 16px;
+	text-align: center;
+}
+
+#MainMenuContainer .server-notice[data-tone="error"] {
+	color: var(--menu-err-text);
+}
+
+/* buttons */
+#MainMenuContainer .server-actions {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 8px;
+}
+
+#MainMenuContainer .server-span-2 { grid-column: span 2; }
+#MainMenuContainer .server-span-3 { grid-column: span 3; }
+#MainMenuContainer .server-span-6 { grid-column: span 6; }
+
+#MainMenuContainer .server-btn {
+	height: 36px;
+	min-width: 0;
+	padding: 11px 6px 0;
+	border: none;
+	clip-path: polygon(
+		0 4px, 2px 4px, 2px 2px, 4px 2px, 4px 0,
+		calc(100% - 4px) 0, calc(100% - 4px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 4px, 100% 4px,
+		100% calc(100% - 4px), calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) calc(100% - 2px), calc(100% - 4px) calc(100% - 2px), calc(100% - 4px) 100%,
+		4px 100%, 4px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 4px), 0 calc(100% - 4px)
+	);
+	overflow: hidden;
+	background: var(--menu-bezel-dark);
+	color: var(--color-light);
+	font: inherit;
+	font-size: 16px;
+	line-height: 20px;
+	text-overflow: ellipsis;
+	text-shadow: 2px 2px 0 var(--menu-outline);
+	white-space: nowrap;
+	cursor: url("/resources/assets/tile_0028-large.png") 0 0, pointer;
+	box-shadow:
+		0 0 0 2px var(--menu-outline),
+		inset 0 2px 0 0 var(--menu-bezel-light),
+		inset 0 -4px 0 0 var(--menu-bezel);
+}
+
+#MainMenuContainer .server-btn:hover {
+	background: var(--menu-play-hover);
+}
+
+#MainMenuContainer .server-btn:active {
+	padding-top: 13px;
+	box-shadow:
+		0 0 0 2px var(--menu-outline),
+		inset 0 2px 0 0 var(--menu-bezel),
+		inset 0 -2px 0 0 var(--menu-bezel);
+}
+
+#MainMenuContainer .server-btn:focus-visible {
+	outline: 2px solid var(--menu-toggle-icon);
+	outline-offset: 4px;
+}
+
+#MainMenuContainer .server-btn-main {
+	height: 44px;
+	padding-top: 11px;
+	background: var(--menu-play);
+	color: var(--menu-play-text);
+	font-size: 24px;
+	line-height: 28px;
+	text-shadow: 0 2px 0 var(--menu-play-lo);
+	box-shadow:
+		0 0 0 2px var(--menu-play-outline),
+		inset 0 2px 0 0 var(--menu-play-hi),
+		inset 0 -6px 0 0 var(--menu-play-lo);
+}
+
+#MainMenuContainer .server-btn-main:active {
+	padding-top: 13px;
+	box-shadow:
+		0 0 0 2px var(--menu-play-outline),
+		inset 0 2px 0 0 var(--menu-play-lo),
+		inset 0 -4px 0 0 var(--menu-play-lo);
+}
+
+#MainMenuContainer .server-btn-delete {
+	background: color-mix(in srgb, var(--color-danger) 55%, var(--menu-outline));
+	box-shadow:
+		0 0 0 2px var(--menu-outline),
+		inset 0 2px 0 0 color-mix(in srgb, var(--color-danger) 70%, white),
+		inset 0 -4px 0 0 color-mix(in srgb, var(--color-danger) 45%, black);
+}
+
+#MainMenuContainer .server-btn-delete:hover {
+	background: color-mix(in srgb, var(--color-danger) 70%, var(--menu-outline));
+}
+
+#MainMenuContainer .server-btn:disabled {
+	background: var(--menu-dis);
+	color: var(--menu-dis-text);
+	text-shadow: none;
+	cursor: url("/resources/assets/tile_0028-large.png") 0 0, not-allowed;
+	box-shadow:
+		0 0 0 2px var(--menu-dis-outline),
+		inset 0 2px 0 0 var(--menu-dis-hi),
+		inset 0 -4px 0 0 var(--menu-dis-lo);
+}
+
+/* add / edit / direct connect form and the delete confirmation */
+#MainMenuContainer .server-form {
+	display: grid;
+	gap: 8px;
+}
+
+#MainMenuContainer .server-form[hidden],
+#MainMenuContainer .server-form [hidden] {
+	display: none;
+}
+
+#MainMenuContainer .server-label {
+	margin: 4px 0 -4px;
+	color: var(--menu-ink);
+	font-size: 12px;
+	line-height: 16px;
+	text-shadow: 1px 1px 0 var(--menu-outline);
+}
+
+#MainMenuContainer .server-input {
+	--ring: var(--menu-field-ring);
+	width: 100%;
+	height: 36px;
+	padding: 12px 12px 0;
+	border: none;
+	border-radius: 0;
+	background: var(--menu-field);
+	color: var(--menu-ink);
+	font-size: 16px;
+	line-height: 24px;
+	box-shadow:
+		inset 0 0 0 2px var(--ring),
+		inset 0 4px 0 2px var(--menu-field-shade);
+}
+
+#MainMenuContainer .server-input::placeholder {
+	color: var(--menu-placeholder);
+}
+
+#MainMenuContainer .server-input:focus {
+	--ring: var(--menu-field-ring-focus);
+	outline: none;
+}
+
+#MainMenuContainer .server-input.form-control-error {
+	--ring: var(--menu-field-ring-error);
+}
+
+#MainMenuContainer .server-hint {
+	margin: 0;
+	color: var(--menu-hint);
+	font-size: 12px;
+	line-height: 16px;
+}
+
+#MainMenuContainer .server-form-error {
+	margin: 0;
+	padding: 6px 8px 2px;
+	background: var(--menu-err-bg);
+	color: var(--menu-err-text);
+	font-size: 12px;
+	line-height: 16px;
+	box-shadow: 0 0 0 2px var(--menu-err-edge);
+}
+
+#MainMenuContainer .server-form .server-actions {
+	margin-top: 8px;
+}
+
+/* inside the forms both buttons share one height */
+#MainMenuContainer .server-form .server-btn-main {
+	height: 36px;
+	padding-top: 11px;
+	font-size: 16px;
+	line-height: 20px;
+	box-shadow:
+		0 0 0 2px var(--menu-play-outline),
+		inset 0 2px 0 0 var(--menu-play-hi),
+		inset 0 -4px 0 0 var(--menu-play-lo);
+}
+
+#MainMenuContainer .server-confirm-text {
+	margin: 12px 0 4px;
+	overflow-wrap: anywhere;
+	color: var(--menu-ink);
+	font-size: 16px;
+	line-height: 24px;
+	text-align: center;
+}
+
+@media (max-width: 520px) {
+	#MainMenuContainer .server-entry {
+		gap: 8px;
+	}
+
+	#MainMenuContainer .server-ping-ms {
+		display: none;
+	}
+
+	#MainMenuContainer .server-btn {
+		font-size: 12px;
+	}
+
+	/* two big buttons on one row, three small ones below: "Direct Connect" would not fit in a third */
+	#MainMenuContainer #btnServerDirect,
+	#MainMenuContainer #btnServerAdd {
+		grid-column: span 3;
+	}
+
+	#MainMenuContainer #btnServerEdit,
+	#MainMenuContainer #btnServerDelete {
+		grid-column: span 2;
+	}
+
+	#MainMenuContainer .server-btn-main {
+		font-size: 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#MainMenuContainer .server-ping[data-state="pending"] .server-bars i {
+		animation: none;
+		background: var(--lobby-muted);
+	}
 }

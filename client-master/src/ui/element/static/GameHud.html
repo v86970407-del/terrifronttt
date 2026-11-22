@@ -5,18 +5,40 @@
 <div id="GameHudContainer" class="layout-window background-vignette">
 	<aside id="leaderboard" class="leaderboard">
 		<button id="leaderboardToggle" class="leaderboard-header" type="button" aria-expanded="true" aria-controls="leaderboardContent">
-			<span class="leaderboard-trophy" aria-hidden="true">🏆</span>
 			<span id="leaderboardTitle"></span>
-			<span class="leaderboard-chevron" aria-hidden="true">⌃</span>
+			<span class="leaderboard-chevron" aria-hidden="true"></span>
 		</button>
 		<div id="leaderboardContent" class="leaderboard-content">
-			<div class="leaderboard-columns" aria-hidden="true">
-				<span>#</span>
-				<span id="leaderboardPlayerLabel"></span>
-				<span id="leaderboardLandLabel"></span>
-			</div>
 			<div id="leaderboardViewport" class="leaderboard-viewport" tabindex="0">
 				<ol id="leaderboardRows" class="leaderboard-rows"></ol>
+			</div>
+		</div>
+	</aside>
+
+	<aside id="resourcePanel" class="resource-panel ui-passive">
+		<div class="resource-frame">
+			<div class="resource-body">
+				<div class="resource-main">
+					<span id="resourceTroops" class="resource-troops">0</span>
+					<span id="resourceRate" class="resource-rate">(+0.00/tick)</span>
+				</div>
+				<div class="resource-stats">
+					<div class="resource-stat">
+						<span class="resource-stat-icon resource-icon-players" aria-hidden="true"></span>
+						<span id="resourcePlayers" class="resource-stat-value">0</span>
+						<span id="resourcePlayersLabel" class="resource-stat-label"></span>
+					</div>
+					<div class="resource-stat">
+						<span class="resource-stat-icon resource-icon-map" aria-hidden="true"></span>
+						<span id="resourceMap" class="resource-stat-value">0%</span>
+						<span id="resourceMapLabel" class="resource-stat-label"></span>
+					</div>
+					<div class="resource-stat">
+						<span class="resource-stat-icon resource-icon-interest" aria-hidden="true"></span>
+						<span id="resourceInterest" class="resource-stat-value">0%</span>
+						<span id="resourceInterestLabel" class="resource-stat-label"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</aside>
@@ -32,7 +54,7 @@
 		</div>
 	</div>
 
-	<div class="anchor-top-right flex-row grid-gap-m ui-passive p-1_2">
+	<div class="anchor-bottom-right hud-buttons flex-row grid-gap-m ui-passive p-1_2">
 		<span id="gameClock" class="hud-clock">00:00:00</span>
 		<button id="openSettings" class="btn btn-circle btn-primary icon-m icon-settings"></button>
 		<button id="exitGame" class="btn btn-circle btn-danger icon-m icon-quit"></button>
@@ -41,8 +63,10 @@
 	<div id="selectorContainer" class="anchor-bottom-center ui-passive selector-container">
 		<button id="selectorMinus" class="selector-step selector-step-minus" type="button" aria-label="Decrease attack strength"></button>
 		<label id="sliderAttackStrength" class="selector-slider">
-			<span id="sliderAttackNumber" class="selector-number">33%</span>
-			<span id="selectorTroopCount" class="selector-troops">0</span>
+			<span class="selector-text">
+				<span id="selectorTroopCount" class="selector-troops">0</span>
+				<span id="sliderAttackNumber" class="selector-number">(50%)</span>
+			</span>
 			<input id="sliderAttackHidden" type="range" min="0" max="100" step="any" aria-label="Attack strength">
 		</label>
 		<button id="selectorPlus" class="selector-step selector-step-plus" type="button" aria-label="Increase attack strength"></button>

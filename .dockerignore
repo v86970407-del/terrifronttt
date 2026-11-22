@@ -1,0 +1,12 @@
+**/node_modules
+**/build
+**/out
+.git
+.github
+server-master
+api-master
+protocol-master
+MapCodec-master
+**/*.md
+.env
+.env.*

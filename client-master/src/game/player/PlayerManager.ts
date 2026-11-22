@@ -2,6 +2,7 @@ import type {Player} from "./Player";
 import {BotPlayer} from "../bot/BotPlayer";
 import {spawnManager} from "./SpawnManager";
 import {gameTicker} from "../GameTicker";
+import {INCOME_INTERVAL_TICKS} from "./Player";
 
 class PlayerManager {
 	private humanCount: number;
@@ -72,7 +73,7 @@ class PlayerManager {
 	//TODO: bot ticking should be done in a separate bot manager
 	tick(): void {
 		this.bots.forEach(bot => bot.tick());
-		if (gameTicker.getTickCount() % 10 === 0) {
+		if (gameTicker.getTickCount() % INCOME_INTERVAL_TICKS === 0) {
 			this.players.forEach(player => player.income());
 		}
 	}

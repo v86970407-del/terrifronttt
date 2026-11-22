@@ -1,10 +1,16 @@
-const {readdirSync, readFileSync, writeFileSync, mkdirSync, unlinkSync} = require("fs");
+const {readdirSync, readFileSync, writeFileSync, mkdirSync} = require("fs");
+
+/**
+ * Default maps are downloaded once and cached here. The cache is committed to the repository so builds (GitHub CI, Railway)
+ * work offline and do not depend on an external server being reachable.
+ */
+const CACHE_DIR = "resources/map-cache";
 
 module.exports = async function (map) {
 	if (map.includes("// BUILD_MAPS_REGISTER")) {
 		console.log("Registering default maps...");
 
-		mkdirSync("build/cache", {recursive: true});
+		mkdirSync(CACHE_DIR, {recursive: true});
 
 		const localMaps = readdirSync("resources/maps").filter(file => file.endsWith(".map")).map(file => {
 			const id = `local-${file.slice(0, -4)}`;
@@ -13,10 +19,10 @@ module.exports = async function (map) {
 			return {id, name, data};
 		});
 
-		const maps = await Promise.all(readFileSync("resources/defaultMaps.txt", "utf8").split("\n").map(m => m.trim()).filter(m => m !== "").map(async map => {
+		const maps = (await Promise.all(readFileSync("resources/defaultMaps.txt", "utf8").split("\n").map(m => m.trim()).filter(m => m !== "").map(async map => {
 			let data, cached = false, name, author;
 			try {
-				data = Uint8Array.from(readFileSync(`build/cache/${map}.mapcache`));
+				data = Uint8Array.from(readFileSync(`${CACHE_DIR}/${map}.mapcache`));
 				offset = 0;
 				name = readZeroString(data);
 				author = {
@@ -30,7 +36,12 @@ module.exports = async function (map) {
 				cached = true;
 			} catch (e) {
 				data = await downloadMap(map, false);
-				({name, author} = (await downloadMap(map, true))["entry"]);
+				const details = await downloadMap(map, true);
+				if (!data || !details) {
+					console.warn(`Skipping default map ${map}: not cached and could not be downloaded.`);
+					return null;
+				}
+				({name, author} = details["entry"]);
 				const cache = new Uint8Array(name.length + author.id.length + author.service.length + author.user_id.length + author.username.length + author.avatar_url.length + 6 + data.length);
 				offset = 0;
 				writeZeroString(cache, name);
@@ -40,11 +51,11 @@ module.exports = async function (map) {
 				writeZeroString(cache, author.username);
 				writeZeroString(cache, author.avatar_url);
 				cache.set(data, offset);
-				writeFileSync(`build/cache/${map}.mapcache`, cache);
+				writeFileSync(`${CACHE_DIR}/${map}.mapcache`, cache);
 			}
 			console.log(`Registered map ${name} [${Math.round(data.length / 1024 * 10) / 10} KB]${cached ? " (cached)" : ""}`);
 			return {id: map, name, author, data};
-		}));
+		}))).filter(m => m !== null);
 
 		const registeredMaps = [
 			...maps.map(m => `mapRegistry.set("${JSON.stringify(m.id).slice(1, -1)}", {name: "${JSON.stringify(m.name).slice(1, -1)}", author: apiToUserAccount(${JSON.stringify(m.author)})});\nmapCache.set("${JSON.stringify(m.id).slice(1, -1)}", Uint8Array.from(atob("${Buffer.from(m.data).toString("base64")}"), c => c.charCodeAt(0)));`),
@@ -55,12 +66,6 @@ module.exports = async function (map) {
 		}
 		map = map.replace(/\/\/ BUILD_MAPS_REGISTER/, registeredMaps.join("\n"));
 
-		for (const file of readdirSync("build/cache")) {
-			if (!maps.some(m => file === `${m.id}.mapcache`)) {
-				console.log(`Removing unused cache ${file}`);
-				unlinkSync(`build/cache/${file}`);
-			}
-		}
 	}
 	return map;
 }

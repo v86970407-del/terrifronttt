@@ -1,0 +1,9 @@
+# Keep line endings stable between Windows and Linux (Railway/GitHub CI)
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ogg binary
+*.mp3 binary
+*.woff binary
+*.map binary
+*.mapcache binary

@@ -4,14 +4,16 @@ import {GameModeIds} from "../../network/protocol/util/GameTypeIds";
 import {registerClickListener} from "../UIEventResolver";
 import {loadValidatedInput} from "../type/ValidatedInput";
 import {showPanel} from "../type/UIPanel";
-import {hideAllUIElements, loadStaticElement, showUIElement} from "../UIManager";
+import {getUIElement, hideAllUIElements, loadStaticElement, showUIElement} from "../UIManager";
 import {t} from "../../util/Lang";
 import {buildButton, displayAlert} from "../type/TextNode";
 import {buildContainer} from "../type/ContentField";
 import {gameLoadFailRegistry, tryStartGame} from "../../game/GameLoader";
 import {closeMultiplayerLobby, openMultiplayerLobby} from "./MultiplayerLobby";
 import buttonSoundUrl from "../../../resources/assets/button-sound.ogg";
+import backgroundMusicUrl from "../../../resources/assets/Wintry by Matthew C. Wright.mp3";
 import {getCountryFlagURL} from "../../util/CountryFlag";
+import {getServerDisplayName, initServerBrowser} from "./ServerBrowser";
 
 //@module ui
 
@@ -19,6 +21,39 @@ loadStaticElement("MainMenu")
 
 const buttonSound = new Audio(buttonSoundUrl);
 buttonSound.preload = "auto";
+const backgroundMusic = new Audio(backgroundMusicUrl);
+backgroundMusic.loop = true;
+backgroundMusic.preload = "auto";
+let isMainMenuVisible = false;
+let isLobbyActive = false;
+
+function playBackgroundMusic(): void {
+	if (!isMainMenuVisible || isLobbyActive || !backgroundMusic.paused) return;
+	void backgroundMusic.play().catch(error => {
+		if (isMainMenuVisible && !isLobbyActive) console.warn("Failed to play homepage background music.", error);
+	});
+}
+
+getUIElement("MainMenu").showListeners.register(() => {
+	isMainMenuVisible = true;
+	playBackgroundMusic();
+});
+getUIElement("MainMenu").hideListeners.register(() => {
+	isMainMenuVisible = false;
+	backgroundMusic.pause();
+});
+
+document.addEventListener("lobby-scene-change", () => {
+	isLobbyActive = document.documentElement.classList.contains("lobby-active");
+	if (isLobbyActive) backgroundMusic.pause();
+	else playBackgroundMusic();
+});
+
+document.addEventListener("pointerdown", playBackgroundMusic, true);
+document.addEventListener("keydown", event => {
+	if (event instanceof KeyboardEvent) playBackgroundMusic();
+}, true);
+
 function playButtonSound(event: Event): void {
 	if (!(event.target instanceof Element)) return;
 	const button = event.target.closest("button");
@@ -57,7 +92,11 @@ if (!(homeScreenLogo instanceof HTMLImageElement)) {
 	}
 }
 
-const btnStartMultiplayer: HTMLButtonElement = (window.document.getElementById("btnStartMultiplayer") as HTMLButtonElement);
+/**
+ * The multiplayer "Play!" button is intentionally not part of the menu while multiplayer is unfinished.
+ * The lobby code stays in the project (see MultiplayerLobby.ts) and is only reachable by joining a server from the Servers tab.
+ */
+let playerNameValid = true;
 const btnStartSingleplayer: HTMLButtonElement = (window.document.getElementById("btnStartSingleplayer") as HTMLButtonElement);
 const btnThemeToggle: HTMLButtonElement = (window.document.getElementById("btnThemeToggle") as HTMLButtonElement);
 const countryFlagButtonPreview = document.getElementById("countryFlagButtonPreview") as HTMLImageElement;
@@ -66,6 +105,8 @@ const homeMenuCenter: HTMLDivElement = document.getElementsByClassName("home-men
 const homeMenuMainView: HTMLDivElement = document.getElementById("homeMenuMainView") as HTMLDivElement;
 const homeMenuThemeView: HTMLDivElement = document.getElementById("homeMenuThemeView") as HTMLDivElement;
 const homeMenuFlagView: HTMLDivElement = document.getElementById("homeMenuFlagView") as HTMLDivElement;
+const homeMenuServerView: HTMLDivElement = document.getElementById("homeMenuServerView") as HTMLDivElement;
+const homeMenuServerCurrent: HTMLSpanElement = document.getElementById("homeMenuServerCurrent") as HTMLSpanElement;
 const homeMenuFlagCatalog: HTMLDivElement = document.getElementById("homeMenuFlagCatalog") as HTMLDivElement;
 const themePreviewImage: HTMLSpanElement = document.getElementById("themePreviewImage") as HTMLSpanElement;
 const themePreviewName: HTMLSpanElement = document.getElementById("themePreviewName") as HTMLSpanElement;
@@ -75,7 +116,8 @@ const btnShowFlags: HTMLButtonElement = document.getElementById("btnShowFlags") 
 
 const themeChoices = [
 	{id: "pastel", name: "Pastel Theme", imageClass: "home-menu-theme-preview-pastel"},
-	{id: "classic", name: "Classic Theme", imageClass: "home-menu-theme-preview-classic"}
+	{id: "classic", name: "Classic Theme", imageClass: "home-menu-theme-preview-classic"},
+	{id: "cartoon", name: "Cartoon Theme", imageClass: "home-menu-theme-preview-cartoon"}
 ] as const;
 let displayedThemeIndex = Math.max(0, themeChoices.findIndex(theme => theme.id === getSetting("theme").id));
 
@@ -194,6 +236,44 @@ function renderFlagCatalog(): void {
 	});
 }
 
+/** Shows which server is currently selected in the Servers tab. */
+function updateCurrentServer(address: string = getSetting("game-server")): void {
+	// setting listeners run before the value is stored, so they get the new value passed in
+	if (address.trim() === "") {
+		homeMenuServerCurrent.textContent = "";
+		homeMenuServerCurrent.title = "";
+		return;
+	}
+	const name = getServerDisplayName(address);
+	homeMenuServerCurrent.textContent = `Server: ${name}`;
+	homeMenuServerCurrent.title = name;
+}
+
+const serverBrowser = initServerBrowser({
+	joinBlocker: () => !playerNameValid ? "Go back and enter a player name first (3-32 characters)." : null,
+	join: () => {
+		hideServerBrowser();
+		openMultiplayerLobby();
+	},
+	requestClose: () => hideServerBrowser()
+});
+
+function showServerBrowser(): void {
+	homeMenuMainView.hidden = true;
+	homeMenuThemeView.hidden = true;
+	homeMenuFlagView.hidden = true;
+	homeMenuServerView.hidden = false;
+	homeMenuCenter.classList.add("home-menu-server-picker-active");
+	serverBrowser.open();
+}
+
+function hideServerBrowser(): void {
+	serverBrowser.close();
+	homeMenuServerView.hidden = true;
+	homeMenuMainView.hidden = false;
+	homeMenuCenter.classList.remove("home-menu-server-picker-active");
+}
+
 function showFlagPicker(): void {
 	homeMenuMainView.hidden = true;
 	homeMenuThemeView.hidden = true;
@@ -255,11 +335,14 @@ async function loadCountryFlags(): Promise<void> {
 void loadCountryFlags();
 updateCountryFlagButton(getSetting("country-flag-none") ? "" : getSetting("country-flag"));
 
-registerClickListener("btnStartMultiplayer", () => openMultiplayerLobby());
 registerClickListener("btnOpenSettings", () => showUIElement("SettingsPanel"));
 registerClickListener("btnShowThemes", showThemePicker);
 registerClickListener("btnBackFromThemes", hideThemePicker);
 registerClickListener(btnShowFlags, showFlagPicker);
+registerClickListener("btnShowServers", showServerBrowser);
+registerClickListener("btnBackFromServers", hideServerBrowser);
+registerSettingListener("game-server", updateCurrentServer);
+updateCurrentServer();
 registerClickListener("btnBackFromFlags", hideFlagPicker);
 registerClickListener("btnPreviousTheme", () => {
 	displayedThemeIndex = (displayedThemeIndex - 1 + themeChoices.length) % themeChoices.length;
@@ -291,7 +374,7 @@ registerSettingListener("dark-mode", isDark => {
 });
 
 registerClickListener("btnStartSingleplayer", () => {
-	showPanel(t("menu.map.select"), buildContainer("grid", "grid-3col").setContent(...getDefaultMapIds().sort((a, b) => a[1].name.localeCompare(b[1].name)).map(map =>
+	showPanel(t("menu.map.select"), buildContainer("grid", "grid-3col", "map-select-grid").setContent(...getDefaultMapIds().sort((a, b) => a[1].name.localeCompare(b[1].name)).map(map =>
 		buildButton(map[1].name).onClick(() => tryStartGame(map[0], GameModeIds.FFA, 23452345, [{name: getSetting("player-name"), countryFlag: getSetting("country-flag")}], 0, true)))
 	));
 });
@@ -305,7 +388,7 @@ gameLoadFailRegistry.register(() => {
 
 loadValidatedInput("playerNameInput", "playerNameInputValidation")
 	.onInput((_value, valid) => {
-		btnStartMultiplayer.disabled = !valid;
+		playerNameValid = valid;
 		btnStartSingleplayer.disabled = !valid;
 	})
 	.mutate(value => value.trim())

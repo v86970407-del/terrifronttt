@@ -1,0 +1,46 @@
+{
+  "territory": [
+    "saturation = 0.85",
+    "lightness = 0.6",
+    "alpha = 0.85"
+  ],
+  "border": [
+    "saturation = 0.85",
+    "lightness = 0.3",
+    "alpha = 1"
+  ],
+  "tileColors": {
+    "grass": "rgb(197 - 7 * i, 255 - 5 * i, 135 - 7 * i)",
+    "mountain": "rgb(255 - 5 * i, 232 - 8 * i, 150 - 6 * i)",
+    "water": "rgb(154 - 8 * i, 255 - 8 * i, 255 - 2 * i)"
+  },
+  "shaders": [
+    {
+      "type": "territory-outline-smooth",
+      "color": "rgba(255, 255, 255, 0.6)",
+      "thickness": 12
+    },
+    {
+      "type": "territory-inline-smooth",
+      "color": "rgba(58, 160, 52, 1)",
+      "thickness": 8
+    },
+    {
+      "type": "territory-outline",
+      "color": "rgba(255, 255, 255, 1)",
+      "thickness": 4
+    },
+    {
+      "type": "territory-inline",
+      "color": "rgba(250, 232, 160, 1)",
+      "thickness": 2
+    },
+    {
+      "type": "territory-outline",
+      "color": "rgba(36, 27, 75, 1)",
+      "thickness": 2
+    }
+  ],
+  "background": "#2a8fe3",
+  "font": "Overpass"
+}

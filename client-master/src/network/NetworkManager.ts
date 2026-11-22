@@ -1,7 +1,6 @@
 import type {BasePacket} from "./protocol/packet/BasePacket";
 import type {GameActionPacket} from "./protocol/packet/game/GameActionPacket";
 import {PROTOCOL_VERSION} from "./protocol/PacketRegistry";
-import {getUserToken} from "./NetworkAuthenticator";
 import {requestTokenExternal} from "./api/UserAuthenticationRoutes";
 import {HandshakeResponsePacket} from "./protocol/packet/handshake/HandshakeResponsePacket";
 import {HandshakeAuthPacket} from "./protocol/packet/handshake/HandshakeAuthPacket";
@@ -27,19 +26,12 @@ let socketTimeout: ReturnType<typeof setTimeout> | undefined;
 export function connectToServer(host: string, abortSignal: AbortSignal | undefined = undefined): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const url = new URL(host);
-		let authPromise: Promise<string | undefined>;
-		if (url.hostname === "warfront.io" || url.hostname === "gateway.warfront.io") {
-			url.protocol = "wss:";
-			url.hostname = "gateway.warfront.io";
-			authPromise = getUserToken().refresh().then(token => token.getRawToken());
-		} else {
-			url.protocol = url.protocol === "http:" || url.protocol === "ws:" ? "ws:" : "wss:";
-			authPromise = new Promise((resolve) => {
-				requestTokenExternal({host: url.hostname})
-					.on(200, token => resolve(token))
-					.catch(() => resolve(undefined));
-			});
-		}
+		url.protocol = url.protocol === "http:" || url.protocol === "ws:" ? "ws:" : "wss:";
+		const authPromise = new Promise<string | undefined>((resolve) => {
+			requestTokenExternal({host: url.hostname})
+				.on(200, token => resolve(token))
+				.catch(() => resolve(undefined));
+		});
 		url.searchParams.set("v", PROTOCOL_VERSION.toString());
 		if (openSocket !== null) {
 			openSocket.close();

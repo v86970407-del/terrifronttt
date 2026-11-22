@@ -8,14 +8,22 @@ class TerritoryManager {
 	readonly OWNER_NONE = 65535;
 
 	/**
+	 * The number of tiles that can be conquered on the current map.
+	 */
+	conquerableTiles = 0;
+
+	/**
 	 * Resets the territory manager.
 	 * Should only be called when a new game is started.
 	 * @internal
 	 */
 	reset(): void {
 		this.tileOwners = new Uint16Array(gameMap.width * gameMap.height);
+		this.conquerableTiles = 0;
 		for (let i = 0; i < this.tileOwners.length; i++) {
-			this.tileOwners[i] = gameMap.getTile(i).conquerable ? this.OWNER_NONE : this.OWNER_NONE - 1;
+			const conquerable = gameMap.getTile(i).conquerable;
+			if (conquerable) this.conquerableTiles++;
+			this.tileOwners[i] = conquerable ? this.OWNER_NONE : this.OWNER_NONE - 1;
 		}
 	}
 

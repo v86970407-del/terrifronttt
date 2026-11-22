@@ -68,7 +68,7 @@ settingAddRegistry.register(setting => {
 		content = buildContainer("settings-category").add(buildSectionHeader(category.name));
 		contentContainer.add(content);
 
-		const tab = buildContainer("settings-tab").add(buildIcon(category.icon ?? "close").setAttribute("tabindex", "0")).onClick(() => {
+		const tab = buildContainer("settings-tab").add(buildIcon(category.icon ?? "close").setAttribute("tabindex", "0").setAttribute("data-label", category.name)).onClick(() => {
 			if (currentCategory) {
 				categories.get(currentCategory)?.getElement().classList.remove("settings-category-active");
 				categoryTabs.get(currentCategory)?.getElement().classList.remove("settings-tab-active");

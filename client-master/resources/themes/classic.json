@@ -1,12 +1,12 @@
 {
   "territory": [
-    "saturation * 0.65",
-    "lightness = 0.68",
-    "alpha = 0.88"
+    "saturation = 0.8",
+    "lightness = 0.5",
+    "alpha = 0.9"
   ],
   "border": [
-    "saturation * 0.75",
-    "lightness = 0.54",
+    "saturation = 0.85",
+    "lightness = 0.3",
     "alpha = 1"
   ],
   "tileColors": {

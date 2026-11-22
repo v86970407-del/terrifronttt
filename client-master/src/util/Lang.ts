@@ -123,6 +123,9 @@ const eng = {
 	"game.leaderboard.players": "Player rankings",
 	"game.leaderboard.player": "Player",
 	"game.leaderboard.land": "Land",
+	"game.resources.players": "Players",
+	"game.resources.map": "Conquered",
+	"game.resources.interest": "Interest",
 	"game.spawn.title": "Spawning",
 	"game.spawn.remaining": "{{seconds, number}}s",
 	"menu.map.select": "Select a map to play",
@@ -134,7 +137,7 @@ const eng = {
 	"setting.boolean.wf@disable-custom-cursor": "Disable Custom Cursor",
 	"setting.boolean.wf@disable-flags": "Disable Flags",
 	"setting.string.wf@game-server": "Server Address",
-	"setting.string.wf@game-server.placeholder": "https://warfront.io",
+	"setting.string.wf@game-server.placeholder": "https://play.example.com",
 } as const;
 
 let langData: Record<string, string>;

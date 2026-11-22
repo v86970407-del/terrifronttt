@@ -1,4 +1,4 @@
-let apiURL = "https://warfront.io/api/v1";
+let apiURL = "http://localhost:13527/api/v1";
 
 if (typeof document !== "undefined") {
 	apiURL = new URL("/api/v1", document.location.href).href;

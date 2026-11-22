@@ -11,6 +11,9 @@
 *.sqlite
 *.sqlite3
 *.db
+*.log
 
 Thumbs.db
 .DS_Store
+.idea/
+.vscode/

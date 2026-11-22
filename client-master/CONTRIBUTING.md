@@ -6,14 +6,14 @@ For security related issues or vulnerabilities, please DO NOT create an issue or
 
 ## Feature Requests - I've got an idea!
 
-If you have an idea how the game could be improved gameplay-wise, please head over to our [discord server](https://discord.gg/tvgfpeCGaD) and post about it there first. You can discuss your idea with the community there and if it is approved, you can create a feature request on GitHub.
+If you have an idea how the game could be improved gameplay-wise, please head over to our [discord server](https://discord.gg/upAywr74ff) and post about it there first. You can discuss your idea with the community there and if it is approved, you can create a feature request on GitHub.
 
 For infrastructure or technical improvements, you can create a rfc (request for comments) on GitHub directly. This allows other contributors to discuss the idea before it is implemented.
 
 ## Bug Reports - This seems broken!
 
 If you have found a bug in the game, you can do one of the following:
-- If you are not sure on the technical details of the bug, you can post about it on our [discord server](https://discord.gg/tvgfpeCGaD).
+- If you are not sure on the technical details of the bug, you can post about it on our [discord server](https://discord.gg/upAywr74ff).
 - Create a new issue on GitHub. Please provide as much information as possible and follow the issue template.
 - If you are able to fix the bug yourself, you can create a pull request with the fix.
 
@@ -52,4 +52,4 @@ The ci pipeline will run tests on your code and check for formatting. If the tes
 
 That's it! Your pull request will be reviewed by a maintainer and merged if it meets the requirements.
 
-If you have any questions or need help with creating a pull request, feel free to ask in our [discord server](https://discord.gg/tvgfpeCGaD).
+If you have any questions or need help with creating a pull request, feel free to ask in our [discord server](https://discord.gg/upAywr74ff).

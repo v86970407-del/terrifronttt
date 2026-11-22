@@ -30,14 +30,17 @@
 							</div>
 							<span class="home-menu-hint">3-32 characters</span>
 
-							<button class="btn btn-primary btn-block home-menu-play" id="btnStartMultiplayer">Play!</button>
 							<button class="btn btn-block home-menu-singleplayer" id="btnStartSingleplayer">Singleplayer</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<span class="form-label form-label-danger home-menu-error" style="display: none;" id="playerNameInputValidation"></span>
-			<button id="btnShowThemes" class="home-menu-themes-button" type="button">THEMES</button>
+			<span id="homeMenuServerCurrent" class="home-menu-server-current" aria-live="polite"></span>
+			<div class="home-menu-extras">
+				<button id="btnShowServers" class="home-menu-servers-button" type="button" aria-label="Choose a server">SERVERS</button>
+				<button id="btnShowThemes" class="home-menu-themes-button" type="button">THEMES</button>
+			</div>
 		</div>
 
 		<div id="homeMenuThemeView" class="home-menu-view home-menu-theme-view" hidden>
@@ -72,9 +75,53 @@
 			</div>
 			<button id="btnBackFromFlags" class="home-menu-back-button" type="button">Go Back</button>
 		</div>
+
+		<div id="homeMenuServerView" class="home-menu-view home-menu-server-view" hidden>
+			<div class="home-menu-frame">
+				<h1 id="serverViewTitle" class="home-menu-title">Servers</h1>
+				<div class="panel w-100 home-menu-panel">
+					<div class="panel-body">
+						<div id="serverListSection">
+							<div id="serverList" class="server-list" role="listbox" aria-label="Servers" tabindex="0"></div>
+							<p id="serverNotice" class="server-notice" role="status"></p>
+							<div class="server-actions">
+								<button id="btnServerJoin" class="server-btn server-btn-main server-span-6" type="button">Join Server</button>
+								<button id="btnServerDirect" class="server-btn server-span-2" type="button">Direct Connect</button>
+								<button id="btnServerAdd" class="server-btn server-span-2" type="button">Add Server</button>
+								<button id="btnServerRefresh" class="server-btn server-span-2" type="button">Refresh</button>
+								<button id="btnServerEdit" class="server-btn server-span-3" type="button">Edit</button>
+								<button id="btnServerDelete" class="server-btn server-btn-delete server-span-3" type="button">Delete</button>
+							</div>
+						</div>
+
+						<div id="serverFormSection" class="server-form" hidden>
+							<label id="serverNameLabel" class="server-label" for="serverNameInput">Server Name</label>
+							<input id="serverNameInput" class="form-control server-input" maxlength="32" autocomplete="off" spellcheck="false" placeholder="My Server">
+							<label class="server-label" for="serverAddressInput">Server Address</label>
+							<input id="serverAddressInput" class="form-control server-input" maxlength="200" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="play.example.com">
+							<p id="serverFormHint" class="server-hint"></p>
+							<p id="serverFormError" class="server-form-error" role="alert" hidden></p>
+							<div class="server-actions">
+								<button id="btnServerFormOk" class="server-btn server-btn-main server-span-3" type="button">Done</button>
+								<button id="btnServerFormCancel" class="server-btn server-span-3" type="button">Cancel</button>
+							</div>
+						</div>
+
+						<div id="serverConfirmSection" class="server-form" hidden>
+							<p id="serverConfirmText" class="server-confirm-text"></p>
+							<div class="server-actions">
+								<button id="btnServerConfirmYes" class="server-btn server-btn-delete server-span-3" type="button">Delete</button>
+								<button id="btnServerConfirmNo" class="server-btn server-span-3" type="button">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button id="btnBackFromServers" class="home-menu-back-button" type="button">Go Back</button>
+		</div>
 	</div>
 
 	<div class="home-menu-footer">
-		<a href="https://discord.gg/Zv8p8tXaDA" target="_blank" title="Join us on Discord" class="icon-fixed icon-discord"></a>
+		<a href="https://discord.gg/upAywr74ff" target="_blank" title="Join us on Discord" class="icon-fixed icon-discord"></a>
 	</div>
 </div>

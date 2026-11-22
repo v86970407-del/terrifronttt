@@ -8,6 +8,8 @@ import {resolveElement} from "../UIElement";
 import {mapActionHandler} from "../../game/action/MapActionHandler";
 import {gameResultRegistry, gameInitRegistry, gameStartRegistry} from "../../game/Game";
 import {clientPlayer} from "../../game/player/PlayerManager";
+import {INCOME_INTERVAL_TICKS} from "../../game/player/Player";
+import {territoryManager} from "../../game/TerritoryManager";
 import {playerManager} from "../../game/player/PlayerManager";
 import {showPanel} from "../type/UIPanel";
 import {t} from "../../util/Lang";
@@ -45,6 +47,7 @@ const hiddenSlider: HTMLInputElement = resolveElement("sliderAttackHidden") as H
 hiddenSlider.onchange = () => setSliderValue(parseInt(hiddenSlider.value) / 100);
 
 const numberDisplay: HTMLElement = resolveElement("sliderAttackNumber");
+const troopCountElement: HTMLElement = resolveElement("selectorTroopCount");
 const SLIDER_STEP = 0.05;
 let sliderValue = 0.5;
 function setSliderValue(value: number) {
@@ -54,8 +57,17 @@ function setSliderValue(value: number) {
 	slider.style.setProperty("--value", `${value * 100}%`);
 	hiddenSlider.value = (value * 100).toString();
 
-	numberDisplay.textContent = Math.round(value * 100) + "%";
 	mapActionHandler.setPower(value * 1000);
+	refreshSelector();
+}
+
+/**
+ * The bar shows how many troops the selected share sends, followed by that share in brackets.
+ */
+function refreshSelector() {
+	troopCountElement.textContent = formatTroops(Math.floor((clientPlayer?.getTroops() ?? 0) * sliderValue));
+	const percent = Math.round(sliderValue * 1000) / 10;
+	numberDisplay.textContent = `(${percent.toString().replace(".", ",")}%)`;
 }
 
 // - / + buttons move the slider one notch, snapping to the 5% grid
@@ -63,17 +75,53 @@ const stepSlider = (direction: number) => setSliderValue(Math.round(sliderValue 
 resolveElement("selectorMinus").addEventListener("click", () => stepSlider(-1));
 resolveElement("selectorPlus").addEventListener("click", () => stepSlider(1));
 
-const troopCountElement = resolveElement("selectorTroopCount");
-gameTicker.registry.register(() => {
-	troopCountElement.innerText = formatTroops(clientPlayer.getTroops());
-});
+gameTicker.registry.register(refreshSelector);
 
 gameInitRegistry.register(() => {
 	hideAllUIElements();
 	showUIElement("GameHud");
 	setSliderValue(0.5);
-	troopCountElement.innerText = formatTroops(clientPlayer.getTroops());
+	refreshResources();
 });
+
+// Resource panel: troops, income per tick and a few empire stats
+resolveElement("resourcePlayersLabel").textContent = t("game.resources.players");
+resolveElement("resourceMapLabel").textContent = t("game.resources.map");
+resolveElement("resourceInterestLabel").textContent = t("game.resources.interest");
+const resourcePanel = resolveElement("resourcePanel");
+const resourceTroops = resolveElement("resourceTroops");
+const resourceRate = resolveElement("resourceRate");
+const resourcePlayers = resolveElement("resourcePlayers");
+const resourceMap = resolveElement("resourceMap");
+const resourceInterest = resolveElement("resourceInterest");
+
+function setText(element: HTMLElement, text: string) {
+	if (element.textContent !== text) element.textContent = text;
+}
+
+function refreshResources() {
+	const player = clientPlayer;
+	if (!player) return;
+	const troops = player.getTroops();
+	const perTick = player.getIncome() / INCOME_INTERVAL_TICKS;
+
+	const troopText = formatTroops(troops);
+	setText(resourceTroops, troopText);
+	resourceTroops.classList.toggle("resource-troops-long", troopText.length > 9);
+	setText(resourceRate, `(+${perTick.toFixed(2)}/tick)`);
+
+	const players = playerManager.getPlayers();
+	setText(resourcePlayers, `${players.filter(p => p.isAlive()).length}/${players.length}`);
+	const conquerable = territoryManager.conquerableTiles;
+	const mapShare = conquerable > 0 ? player.getTerritorySize() / conquerable * 100 : 0;
+	setText(resourceMap, `${mapShare.toFixed(mapShare < 1 ? 3 : 2)}%`);
+	setText(resourceInterest, `${(troops > 0 ? perTick / troops * 100 : 0).toFixed(2)}%`);
+}
+
+gameTicker.registry.register(() => {
+	if (gameTicker.getTickCount() % 2 === 0) refreshResources();
+});
+blockInteraction(resourcePanel);
 
 blockInteraction(gameClock);
 blockInteraction(resolveElement("selectorContainer"));
@@ -86,8 +134,6 @@ const leaderboardRows = resolveElement("leaderboardRows");
 const leaderboardViewport = resolveElement("leaderboardViewport");
 const numberFormat = new Intl.NumberFormat();
 resolveElement("leaderboardTitle").textContent = t("game.leaderboard.title").toLocaleUpperCase();
-resolveElement("leaderboardPlayerLabel").textContent = t("game.leaderboard.player");
-resolveElement("leaderboardLandLabel").textContent = t("game.leaderboard.land");
 leaderboard.setAttribute("aria-label", t("game.leaderboard.title"));
 leaderboardRows.setAttribute("aria-label", t("game.leaderboard.players"));
 
@@ -120,7 +166,8 @@ function updateLeaderboard() {
 }
 
 function renderLeaderboardRows() {
-	const rowHeight = 20;
+	const rowHeight = 24;
+	const topLand = Math.max(1, leaderboardEntries[0]?.land ?? 1);
 	const visibleRows = Math.ceil(leaderboardViewport.clientHeight / rowHeight);
 	const firstRow = Math.max(0, Math.floor(leaderboardViewport.scrollTop / rowHeight) - 2);
 	const lastRow = Math.min(leaderboardEntries.length, firstRow + visibleRows + 4);
@@ -129,6 +176,8 @@ function renderLeaderboardRows() {
 		const row = document.createElement("li");
 		row.classList.add("leaderboard-row");
 		row.style.top = `${(firstRow + index) * rowHeight}px`;
+		row.style.setProperty("--share", String(Math.round(entry.land / topLand * 100)));
+		if (entry.rank <= 3) row.setAttribute("data-podium", String(entry.rank));
 		row.setAttribute("aria-posinset", String(firstRow + index + 1));
 		row.setAttribute("aria-setsize", String(leaderboardEntries.length));
 		if (entry.player.id === clientPlayer.id) {
@@ -138,7 +187,7 @@ function renderLeaderboardRows() {
 
 		const rankCell = document.createElement("span");
 		rankCell.classList.add("leaderboard-rank");
-		rankCell.textContent = `${entry.rank}.`;
+		rankCell.textContent = String(entry.rank);
 
 		const nameCell = document.createElement("span");
 		nameCell.classList.add("leaderboard-player");

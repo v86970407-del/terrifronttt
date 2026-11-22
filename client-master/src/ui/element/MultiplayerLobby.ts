@@ -66,6 +66,7 @@ function cancelPendingCommit(): void {
 /** While the lobby is open the CSS hides the main menu so only the background image stays behind it. */
 function setLobbyScene(active: boolean): void {
 	document.documentElement.classList.toggle("lobby-active", active);
+	document.dispatchEvent(new Event("lobby-scene-change"));
 }
 
 function resetLobbyState(): void {

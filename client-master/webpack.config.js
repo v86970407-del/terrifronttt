@@ -8,9 +8,10 @@ const Watchpack = require("watchpack");
 const {DefinePlugin} = require("webpack");
 const {execSync} = require("child_process");
 
-let clientHash;
+// CLIENT_HASH (or Railway's commit SHA) wins, so Docker builds without a .git folder still get a useful version string
+let clientHash = (process.env.CLIENT_HASH || process.env.RAILWAY_GIT_COMMIT_SHA || "").slice(0, 10);
 try {
-	clientHash = execSync("git describe --always --long --tags --abbrev=10 --dirty --broken").toString().replace(/\n/g, "");
+	if (!clientHash) clientHash = execSync("git describe --always --long --tags --abbrev=10 --dirty --broken").toString().replace(/\n/g, "");
 } catch (error) {
 	console.warn("Unable to determine client build hash from Git; using 'unknown'.", error.message);
 	clientHash = "unknown";
@@ -69,6 +70,13 @@ module.exports = {
 				}
 			},
 			{
+				test: /\.mp3$/i,
+				type: "asset/resource",
+				generator: {
+					filename: "resources/assets/[name][ext]"
+				}
+			},
+			{
 				test: /\.ts$/,
 				use: ["ts-loader"]
 			},
@@ -102,7 +110,7 @@ module.exports = {
 		cache: false
 	}), new HtmlInlineScriptPlugin(), new UiModuleLoader(), new SourceMapFixer(), new DefinePlugin({
 		"process.env.BUILD_CLIENT_HASH": JSON.stringify(clientHash),
-		"process.env.BUILD_GAME_SERVER": `"${process.env.GAME_SERVER || "https://warfront.io"}"`
+		"process.env.BUILD_GAME_SERVER": `"${process.env.GAME_SERVER || ""}"`
 	})],
 	devServer: {
 		hot: false,
@@ -133,7 +141,7 @@ module.exports = {
 		},
 		proxy: [{
 			context: ["/api/v1"],
-			target: process.env.API_SERVER || "https://warfront.io",
+			target: process.env.API_SERVER || "http://localhost:13527",
 			changeOrigin: true
 		}]
 	}
